@@ -1,0 +1,180 @@
+{{extend 'layout.html'}}
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title pull-left display-3"><span
+                class="glyphicon glyphicon-paste"></span> {{=request.function.capitalize()}} {{=request.controller.capitalize()}}
+        </h3>
+        <button type="button" class="btn btn-primary pull-right btn-sm"><span class="glyphicon glyphicon-plus"></span>
+            Add Referral
+        </button>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body" style="overflow-x: auto;"> {{# otherwise it will overflow beyond panel-body when resized}}
+        <table class="table table-striped table-hover table-bordered">
+            <tr>
+                <th><span class="glyphicon glyphicon-check"></span></th>
+                <th><span class="glyphicon glyphicon-flag"></span></th>
+                <th>Order Date</th>
+                <th>Patient Name</th>
+                <th>Date of Birth</th>
+                <th>Ordering Provider</th>
+                <th>Referral Destination</th>
+                <th>Appointment Date</th>
+                <th>Options</th>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><span class="glyphicon glyphicon-exclamation-sign text-danger" title="Urgent" data-toggle="tooltip"
+                          data-placement="top"></span></td>
+                <td>1/1/2016</td>
+                <td>Smith Jackson</td>
+                <td>12/14/1923</td>
+                <td>Dr. Das</td>
+                <td>Lab Corp</td>
+                <td>03/17/2016</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-trash" title="Trash"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-edit" title="Edit"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-duplicate" title="Duplicate"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td></td>
+                <td>2/11/2016</td>
+                <td>Sally Doe</td>
+                <td>12/14/1990</td>
+                <td>Dr. Simons</td>
+                <td>Lab Corp</td>
+                <td>04/1/2016</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-trash" title="Trash"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-edit" title="Edit"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-duplicate" title="Duplicate"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td></td>
+                <td>2/14/2016</td>
+                <td>James Wilson</td>
+                <td>6/14/1939</td>
+                <td>Dr. Das</td>
+                <td>Lab Corp</td>
+                <td>04/11/2016</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-trash" title="Trash"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-edit" title="Edit"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-duplicate" title="Duplicate"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><span class="glyphicon glyphicon-ok text-success" title="Success" data-toggle="tooltip"
+                          data-placement="top"></span></td>
+                <td>3/15/2016</td>
+                <td>Johnny Chen</td>
+                <td>7/24/1948</td>
+                <td>Dr. Simons</td>
+                <td>X-Ray America</td>
+                <td>04/17/2016</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-trash" title="Trash"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-edit" title="Edit"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-duplicate" title="Duplicate"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td></td>
+                <td>1/15/2016</td>
+                <td>Mohammed Ali</td>
+                <td>9/24/1978</td>
+                <td>Dr. Das</td>
+                <td>MRI Centers LLC</td>
+                <td>04/19/2016</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-trash" title="Trash"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-edit" title="Edit"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-duplicate" title="Duplicate"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="panel-footer">
+        <button type="button" class="btn btn-info btn-sm pull-left"><span
+                class="glyphicon glyphicon glyphicon-share-alt"></span> Send Reminders
+        </button>
+        <div class="btn-group pull-right" role="group">
+            <button type="button" class="btn btn-default btn-sm"><span
+                    class="glyphicon glyphicon glyphicon-chevron-left"></span></button>
+            <button type="button" class="btn btn-default btn-sm"><span
+                    class="glyphicon glyphicon glyphicon-chevron-right"></span></button>
+        </div>
+        <small class="text-muted pull-right">Page 1 of 1&nbsp;</small>
+        <div class="clearfix"></div> {{#http://jsfiddle.net/b2m38br9/1/}}
+    </div>
+</div>
+
+<script>
+    $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            }
+    )
+</script>

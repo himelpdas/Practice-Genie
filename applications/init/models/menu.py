@@ -6,16 +6,16 @@
 #########################################################################
 
 response.logo = A(B(SPAN("P"),'ractice',SPAN("G"),'enie'),XML('&trade;&nbsp;'),
-                  _class="navbar-brand",_href="http://www.web2py.com/",
+                  _class="navbar-brand",_href=URL('default', 'index'),
                   _id="web2py-logo")
 response.title = request.application.replace('_',' ').title()
 response.subtitle = ''
 
 ## read more at http://dev.w3.org/html5/markup/meta.name.html
-response.meta.author = 'Your Name <you@example.com>'
-response.meta.description = 'a cool new app'
-response.meta.keywords = 'web2py, python, framework'
-response.meta.generator = 'Web2py Web Framework'
+response.meta.author = 'BidDrive LLC'
+response.meta.description = 'PracticeGenie is a tool designed to simplify the tracking and reminding of primary care referrals.'
+response.meta.keywords = 'EMR, reminders, healthcare'
+response.meta.generator = 'Web2py Web Framework'  # software that made this page
 
 ## your http://google.com/analytics id
 response.google_analytics_id = None
@@ -25,7 +25,11 @@ response.google_analytics_id = None
 #########################################################################
 
 response.menu = [
-    (T('Home'), False, URL('default', 'index'), [])
+    (T('Business Report'), False, URL('bucket', 'business'), []),
+    (T('Referral Bucket'), (request.function == 'referral'), URL('bucket', 'referral'), []),  # https://web2py.wordpress.com/tag/active-menu/
+    (T('Lab Order Bucket'), False, URL('bucket', 'lab_orders'), []),
+    (T('DI Order Bucket'), False, URL('bucket', 'di_orders'), []),
+    (T('QUARR/HEIDIS'), False, URL('bucket', 'quarr_heidis'), []),
 ]
 
 DEVELOPMENT_MENU = False
