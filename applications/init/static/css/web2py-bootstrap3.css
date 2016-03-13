@@ -319,3 +319,7 @@ input[type=checkbox], input[type=radio] {
 .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
     border: 1px dashed #dfd7ca;  /* dashed lines between table cells */
 }
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {  /* http://goo.gl/Hj7OZe */
+  background-color: #F8F0E3;  /* http://www.hexcolortool.com/DFD7CA */
+}
