@@ -314,3 +314,8 @@ td.w2p_fc,
 input[type=checkbox], input[type=radio] {
     margin: 4px 4px 0 0;
 }
+
+/* CUSTOMIZED */
+.table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+    border: 1px dashed #dfd7ca;  /* dashed lines between table cells */
+}
