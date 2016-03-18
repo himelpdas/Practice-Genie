@@ -323,3 +323,7 @@ input[type=checkbox], input[type=radio] {
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {  /* http://goo.gl/Hj7OZe */
   background-color: #F8F0E3;  /* http://www.hexcolortool.com/DFD7CA */
 }
+
+.web2py-menu-active {
+    background-color: #F8F0E3;  /* todo- color chosen conditionally */
+}
