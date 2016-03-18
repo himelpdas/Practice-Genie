@@ -5,7 +5,8 @@
         <h3 class="panel-title pull-left display-3"><span
                 class="glyphicon glyphicon-paste"></span> {{=request.function.capitalize()}} {{=request.controller.capitalize()}}
         </h3>
-        <button type="button" class="btn btn-primary pull-right btn-sm"><span class="glyphicon glyphicon-plus"></span>
+        <button type="button" class="btn btn-primary pull-right btn-sm" data-toggle="modal"
+                data-target="#add_referral_modal"><span class="glyphicon glyphicon-plus"></span>
             Add Referral
         </button>
         <div class="clearfix"></div>
@@ -34,7 +35,8 @@
                 <td>Lab Corp</td>
                 <td>03/17/2016</td>
                 <td>
-                    <div class="btn-group" role="group" style="display: flex;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
+                    <div class="btn-group" role="group"
+                         style="display: flex;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
                         <button type="button" class="btn btn-secondary btn-sm"><span
                                 class="glyphicon glyphicon-trash" title="Trash"
                                 data-toggle="tooltip"
@@ -197,6 +199,21 @@
         <div class="clearfix"></div> {{#http://jsfiddle.net/b2m38br9/1/}}
     </div>
 </div>
+
+<div id="add_referral_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-plus"></span> Add {{=request.function.capitalize()}}</h4>
+            </div>
+            <div class="modal-body">
+                {{=form}}
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script>
     $(function () {

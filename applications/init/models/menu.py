@@ -12,7 +12,7 @@ response.title = request.application.replace('_',' ').title()
 response.subtitle = ''
 
 ## read more at http://dev.w3.org/html5/markup/meta.name.html
-response.meta.author = 'BidDrive LLC'
+response.meta.author = 'Insight Management'
 response.meta.description = 'PracticeGenie is a tool designed to simplify the tracking and reminding of primary care referrals.'
 response.meta.keywords = 'EMR, reminders, healthcare'
 response.meta.generator = 'Web2py Web Framework'  # software that made this page
