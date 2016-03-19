@@ -327,3 +327,8 @@ input[type=checkbox], input[type=radio] {
 .web2py-menu-active {
     background-color: #F8F0E3;  /* todo- color chosen conditionally */
 }
+
+.modal-body{
+    /* max-height: calc(100vh - 120px);  /* minus height of modal header - handled in JQuery modalMax */
+    overflow-y: auto;
+}

@@ -20,6 +20,10 @@ response.meta.generator = 'Web2py Web Framework'  # software that made this page
 ## your http://google.com/analytics id
 response.google_analytics_id = None
 
+## todo - uncomment on deploy
+#response.optimize_css = "concat,minify,inline"
+#response.optimize_js = "concat,minify,inline"
+
 #########################################################################
 ## this is the main application menu add/remove items as required
 #########################################################################

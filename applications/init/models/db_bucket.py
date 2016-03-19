@@ -26,5 +26,6 @@ db.define_table('referral',
     Field('ordering_provider', 'reference:provider', requires=IS_IN_DB(db, db.provider)),
     Field('appointment_date', 'date', default=request.now),
     Field('referral_destination', "reference:site", requires=IS_IN_DB(db, db.site)),  # 1st arg can be db or query set: db.person.name.requires = IS_IN_DB(db(db.person.id>10), 'person.id', '%(name)s')
+    Field('urgent', 'boolean'),
     auth.signature,
 )
