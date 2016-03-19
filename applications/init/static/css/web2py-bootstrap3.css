@@ -332,3 +332,7 @@ input[type=checkbox], input[type=radio] {
     /* max-height: calc(100vh - 120px);  /* minus height of modal header - handled in JQuery modalMax */
     overflow-y: auto;
 }
+
+div.w2p_flash.alert {
+    z-index: 9999;
+}
