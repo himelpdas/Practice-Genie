@@ -4,7 +4,7 @@
 
 function modalMax() {
     // ensures modal is stretched to maximum viewport height, with proper margins
-    $(".modal-body").css({"max-height": $(window).height() - $(".modal-body").offset().top - $(".modal-dialog").offset().top - 7});
+    $(".modal-body").css({"max-height": $(window).height() - $(".modal-body").offset().top - $(".modal-dialog").offset().top - 0});
 }
 
 $(function () {

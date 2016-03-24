@@ -1,3 +1,4 @@
+#@auth.requires_login()
 def referral():
     """
     example action using the internationalization operator T and flash
@@ -11,7 +12,6 @@ def referral():
         TAG.button('Cancel', _type="button", _class="btn btn-default-outline btn-sm pull-right", **{'_data-dismiss' : 'modal'}),
         TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right", _style="margin-right:5px;"),
     ])  # to combine multiple tables you can use SQLFORM.factory (See: One form for multiple tables) or form[0].insert (see: Adding extra form elements to SQLFORM)
-    form.element('div#submit_record__row').element('div.col-sm-9')['_class']="col-sm-12"  # https://groups.google.com/forum/#!topic/web2py/bgDJWVmhS5Y
     if form.process().accepted:
         patient_id = db.client.insert(**db.patient._filter_fields(form.vars))
         form.vars.patient = patient_id  # this is a field in referral
