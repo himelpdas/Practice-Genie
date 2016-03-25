@@ -64,7 +64,7 @@
             {{navbar = auth.navbar('Welcome',mode='dropdown')}}
             {{if navbar and auth.is_logged_in():}}
                 {{auth_navbar_components = navbar.element('ul.dropdown-menu').components}}
-                {{auth_navbar_components.insert(2, LI(A(I(_class="icon icon-off glyphicon glyphicon-cog"), " Settings" ,_href = URL('manage','settings')), rel="nofollow"))}}
+                {{auth_navbar_components.insert(2, LI(A(I(_class="icon icon-off glyphicon glyphicon-cog"), " Preferences" ,_href = URL('manage','settings')), rel="nofollow"))}}
             {{pass}}
             {{='auth' in globals() and navbar or ''}}
           </ul>
@@ -109,10 +109,9 @@
     {{block footer}} <!-- this is default footer -->      
     <footer class="footer">
       <div class="container-fluid">
-        <div class="copyright pull-left">{{=T('Copyright')}} &#169; {{=request.now.year}} {{=response.meta.author}}</div>
+        <div class="copyright pull-left">{{=T('Copyright')}} <span class="glyphicon glyphicon-copyright-mark"></span> {{=request.now.year}} {{=response.meta.author}}</div>
           <div id="poweredBy" class="pull-right">
-            {{=T('Powered by')}}
-            <a href="http://www.web2py.com/">web2py</a>
+            Made with <span class="glyphicon glyphicon-heart-empty" style="color:crimson"></span> in Westchester, NY
           </div>
       </div>
     </footer>

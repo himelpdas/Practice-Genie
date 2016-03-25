@@ -336,3 +336,7 @@ input[type=checkbox], input[type=radio] {
 div.w2p_flash.alert {
     z-index: 9999;
 }
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    color: crimson;
+}

@@ -27,7 +27,3 @@ def referral():
         db.provider.on(db.referral.ordering_provider == db.provider.id),
     ])  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
     return dict(form=form, rows=rows)
-
-def test():
-    x=SQLFORM.factory(db.patient, db.referral)
-    return dict(form=x)

@@ -34,6 +34,7 @@ response.menu = [
     (T('Lab Order Bucket'), False, URL('bucket', 'lab_orders'), []),
     (T('DI Order Bucket'), False, URL('bucket', 'di_orders'), []),
     (T('QUARR/HEIDIS'), False, URL('bucket', 'quarr_heidis'), []),
+    (T('Manage'), (request.controller == 'manage'), URL('manage', 'settings'), []),
 ]
 
 DEVELOPMENT_MENU = False
