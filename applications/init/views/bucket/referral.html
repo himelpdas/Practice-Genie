@@ -24,16 +24,20 @@
                 <th>Appointment Date</th>
                 <th>Options</th>
             </tr>
+        {{for row in rows:}}
             <tr>
                 <td><input type="checkbox"></td>
-                <td><span class="glyphicon glyphicon-exclamation-sign text-danger" title="Urgent" data-toggle="tooltip"
+                <td>
+                    {{if row.referral.urgent:}}
+                    <span class="glyphicon glyphicon-exclamation-sign text-danger" title="Urgent" data-toggle="tooltip"
                           data-placement="top"></span></td>
-                <td>1/1/2016</td>
-                <td>Smith Jackson</td>
-                <td>12/14/1923</td>
-                <td>Dr. Das</td>
-                <td>Lab Corp</td>
-                <td>03/17/2016</td>
+                    {{pass}}
+                <td>{{=row.referral.order_date}}</td>
+                <td>{{=row.patient.last_name}}, {{=row.patient.first_name}}</td>
+                <td>{{=row.patient.date_of_birth}}</td>
+                <td>{{=row.provider.first_name}} {{=row.provider.last_name}} {{=row.provider.title}}</td>
+                <td>{{=row.site.name}}</td>
+                <td>{{=row.referral.appointment_date}}</td>
                 <td>
                     <div class="btn-group" role="group"
                          style="display: flex;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
@@ -52,137 +56,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td><input type="checkbox"></td>
-                <td></td>
-                <td>2/11/2016</td>
-                <td>Sally Doe</td>
-                <td>12/14/1990</td>
-                <td>Dr. Simons</td>
-                <td>Lab Corp</td>
-                <td>04/1/2016</td>
-                <td>
-                    <div class="btn-group" role="group" style="display: flex;">
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-trash" title="Trash"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-edit" title="Edit"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-duplicate" title="Duplicate"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox"></td>
-                <td></td>
-                <td>2/14/2016</td>
-                <td>James Wilson</td>
-                <td>6/14/1939</td>
-                <td>Dr. Das</td>
-                <td>Lab Corp</td>
-                <td>04/11/2016</td>
-                <td>
-                    <div class="btn-group" role="group" style="display: flex;">
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-trash" title="Trash"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-edit" title="Edit"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-duplicate" title="Duplicate"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox"></td>
-                <td><span class="glyphicon glyphicon-ok text-success" title="Success" data-toggle="tooltip"
-                          data-placement="top"></span></td>
-                <td>3/15/2016</td>
-                <td>Johnny Chen</td>
-                <td>7/24/1948</td>
-                <td>Dr. Simons</td>
-                <td>X-Ray America</td>
-                <td>04/17/2016</td>
-                <td>
-                    <div class="btn-group" role="group" style="display: flex;">
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-trash" title="Trash"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-edit" title="Edit"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-duplicate" title="Duplicate"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox"></td>
-                <td></td>
-                <td>1/15/2016</td>
-                <td>Mohammed Ali</td>
-                <td>9/24/1978</td>
-                <td>Dr. Das</td>
-                <td>MRI Centers LLC</td>
-                <td>04/19/2016</td>
-                <td>
-                    <div class="btn-group" role="group" style="display: flex;">
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-trash" title="Trash"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-edit" title="Edit"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-duplicate" title="Duplicate"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox"></td>
-                <td></td>
-                <td>1/10/2016</td>
-                <td>Miriam Hernandez</td>
-                <td>10/24/1988</td>
-                <td>Dr. Das</td>
-                <td>MRI Centers LLC</td>
-                <td>04/20/2016</td>
-                <td>
-                    <div class="btn-group" role="group" style="display: flex;">
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-trash" title="Trash"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-edit" title="Edit"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-duplicate" title="Duplicate"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
-                    </div>
-                </td>
-            </tr>
+        {{pass}}
         </table>
     </div>
     <div class="panel-footer">

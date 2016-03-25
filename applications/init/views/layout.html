@@ -61,7 +61,12 @@
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav navbar-right">
-            {{='auth' in globals() and auth.navbar('Welcome',mode='dropdown') or ''}}
+            {{navbar = auth.navbar('Welcome',mode='dropdown')}}
+            {{if navbar and auth.is_logged_in():}}
+                {{auth_navbar_components = navbar.element('ul.dropdown-menu').components}}
+                {{auth_navbar_components.insert(2, LI(A(I(_class="icon icon-off glyphicon glyphicon-cog"), " Settings" ,_href = URL('manage','settings')), rel="nofollow"))}}
+            {{pass}}
+            {{='auth' in globals() and navbar or ''}}
           </ul>
           {{if response.menu:}}
           {{=MENU(response.menu, _class='nav navbar-nav',li_class='dropdown',ul_class='dropdown-menu')}}
