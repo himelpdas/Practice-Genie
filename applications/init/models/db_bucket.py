@@ -9,6 +9,7 @@ db.define_table("patient",
 
 db.define_table("site",
     Field('name'),
+    Field('phone', requires=IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$')),
     Field('address'),
     Field('city'),
     Field('district', label="State"),  # should not use reserved keywords like state
@@ -20,8 +21,11 @@ db.define_table("site",
 db.define_table("provider",
     Field('first_name'),
     Field('last_name'),
-    Field('title', requires=IS_IN_SET(["DO", "MD", "NP"])),
+    Field('title', requires=IS_IN_SET(["DO", "MD", "NP", "PA"])),
     Field('site', "reference site", requires=IS_IN_DB(db, db.site, '%(name)s')),
+    Field('email', requires=IS_EMAIL()),
+    Field('phone', requires=IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$')),
+    Field('ext', requires=IS_EMPTY_OR(IS_INT_IN_RANGE(0,10000))),
     auth.signature,
 )
 

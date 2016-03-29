@@ -83,7 +83,7 @@
             </div>
             <div class="modal-body">
             {{form.element('div#submit_record__row').element('div.col-sm-9')['_class']="col-sm-12"}}    {{# https://groups.google.com/forum/#!topic/web2py/bgDJWVmhS5Y}}
-            {{for i in form.elements('div.form-group'):}}   {{# just .form-group works but better to be explicit  # http://www.w3schools.com/bootstrap/bootstrap_forms_sizing.asp}}
+            {{for i in form.elements('div.form-group'):}}   {{# just .form-group works, but better to be explicit  # http://www.w3schools.com/bootstrap/bootstrap_forms_sizing.asp}}
                 {{i['_class'] += " form-group-sm"}}
             {{pass}}
                 {{=form}}

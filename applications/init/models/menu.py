@@ -31,10 +31,10 @@ response.google_analytics_id = None
 response.menu = [
     (T('Business Report'), False, URL('bucket', 'business'), []),
     (T('Referral Bucket'), (request.function == 'referral'), URL('bucket', 'referral'), []),  # https://web2py.wordpress.com/tag/active-menu/
-    (T('Lab Order Bucket'), False, URL('bucket', 'lab_orders'), []),
-    (T('DI Order Bucket'), False, URL('bucket', 'di_orders'), []),
+    (T('Lab Order Bucket'), False, URL('bucket', 'lab_order'), []),
+    (T('DI Order Bucket'), False, URL('bucket', 'di_order'), []),
     (T('QUARR/HEIDIS'), False, URL('bucket', 'quarr_heidis'), []),
-    (T('Manage'), (request.controller == 'manage'), URL('manage', 'settings'), []),
+    (T('Manage'), (request.controller == 'manage'), URL('manage', 'provider'), []),
 ]
 
 DEVELOPMENT_MENU = False
