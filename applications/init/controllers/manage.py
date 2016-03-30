@@ -8,6 +8,8 @@ def provider():
     ])
     if form.process(onvalidation=on_validation.beautify_name, keepvalues=True).accepted:
         response.flash='Provider added successfully'
+    elif form.errors:
+        response.flash_modal = "#add_provider_modal"
 
-    rows = db(db.provider.id>0).select(db.site.ALL, db.provider.ALL, join=[db.site.on(db.provider.site == db.site.id)])
+    rows = db(db.provider.id > 0).select(db.site.ALL, db.provider.ALL, join=[db.site.on(db.provider.site == db.site.id)])
     return dict(form=form, rows=rows)

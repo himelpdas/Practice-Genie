@@ -5,8 +5,8 @@
 function modalMax() {
     // ensures modal is stretched to maximum viewport height, with proper margins
     modal_body = $(".modal-body");
-    if (modal_body.length != 0) {  // modal_body.length sees if element exists http://goo.gl/aydXl
-        modal_body.css({"max-height": $(window).height() - $(".modal-body").offset().top - $(".modal-dialog").offset().top - 0});
+    if (modal_body.length > 0) {  // modal_body.length sees if element exists http://goo.gl/aydXl
+        modal_body.css({"max-height": $(window).height() - $(".modal-body").offset().top - $(".modal-dialog").offset().top - 10});
     }
 }
 
@@ -19,9 +19,9 @@ function navbarPad(){
 
 
 $(function () {
-    if ($(".w2p_flash").css("display") == "block"){  // show modal when form has error (since response.flash will show)
-        $("#add_referral_modal").modal('show');
-    }  // keep this function BEFORE $('.modal').on('shown.bs.modal', modalMax) or else it won't resize properly on error
+    //if ($(".w2p_flash").css("display") == "block"){  // show modal when form has error (since response.flash will show)
+    //    $("#add_referral_modal").modal('show');
+    //}  // keep this function BEFORE $('.modal').on('shown.bs.modal', modalMax) or else it won't resize properly on error
 
     $('.modal').on('shown.bs.modal', modalMax);  // run modalMax when modal is shown
     $(window).resize(modalMax);  // when window is resized

@@ -1,0 +1,8 @@
+{{if response.flash_modal:}}
+<script>
+    $(function () {
+                $('{{=response.flash_modal}}').modal('show')
+            }
+    )
+</script>
+{{pass}}

@@ -1,4 +1,5 @@
 import on_validation
+from Paginater import Paginater
 
 @auth.requires_login()
 def referral():
@@ -20,10 +21,15 @@ def referral():
         form.vars.patient = patient_id  # this is a field in referral
         referral_id = db.referral.insert(**db.referral._filter_fields(form.vars))
         response.flash='Referral successfully added'
+    elif form.errors:
+        response.flash_modal = "#add_referral_modal"
 
-    rows = db(db.referral.id > 0).select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, join=[
+    query_set = db(db.referral.id > 0)
+    paginater = Paginater(request, query_set)
+    rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, join=[
         db.patient.on(db.referral.patient == db.patient.id),
         db.site.on(db.referral.referral_destination == db.site.id),
         db.provider.on(db.referral.ordering_provider == db.provider.id),
-    ])  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
-    return dict(form=form, rows=rows)
+    ], limitby=paginater.limitby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
+
+    return dict(form=form, rows=rows, paginater=paginater)

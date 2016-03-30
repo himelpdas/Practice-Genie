@@ -33,9 +33,7 @@
 </div><!-- /.modal -->
 {{pass}}
 
-<script>
-    $(function () {
-                $('[data-toggle="tooltip"]').tooltip()
-            }
-    )
-</script>
+{{block page_js}}
+{{include '__page_js/tooltip.html'}}
+{{include '__page_js/flash_modal.html'}}
+{{end}}

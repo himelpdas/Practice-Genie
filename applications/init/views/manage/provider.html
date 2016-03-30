@@ -21,7 +21,7 @@
                 <th>Site</th>
                 <th>Options</th>
             </tr>
-        {{for row in rows:}}
+        {{for i, row in enumerate(rows):}}
             <tr>
                 <td>{{=row.provider.last_name}}, {{=row.provider.first_name}}</td>
                 <td>{{=row.provider.title}}</td>

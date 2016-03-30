@@ -23,14 +23,14 @@
                 <th>Appointment Date</th>
                 <th>Options</th>
             </tr>
-        {{for row in rows:}}
+        {{for i, row in enumerate(rows):}}
             <tr>
                 <td><input type="checkbox"></td>
                 <td>
-                    {{if row.referral.urgent:}}
+                {{if row.referral.urgent:}}
                     <span class="glyphicon glyphicon-exclamation-sign text-danger" title="Urgent" data-toggle="tooltip"
                           data-placement="top"></span></td>
-                    {{pass}}
+            {{pass}}
                 <td>{{=row.referral.order_date}}</td>
                 <td>{{=row.patient.last_name}}, {{=row.patient.first_name}}</td>
                 <td>{{=row.patient.date_of_birth}}</td>
@@ -62,13 +62,16 @@
         <button type="button" class="btn btn-info btn-sm pull-left"><span
                 class="glyphicon glyphicon glyphicon-share-alt"></span> Send Reminders
         </button>
-        <div class="btn-group pull-right" role="group">
-            <button type="button" class="btn btn-secondary btn-sm"><span
+        <div class="btn-group pull-right"
+             role="group">  {{# The .btn classes are designed to be used with the <button> element. However, you can also use these classes on <a> or <input> elements. When using button classes on <a> elements that are used to trigger in-page functionality (like collapsing content), rather than linking to new pages or sections within the current page, these links should be given a role="button" to appropriately convey their purpose to assistive technologies such as screen readers.}}
+            <button type="button"{{if paginater.has_prev:}} onclick='location.href="{{=URL(vars=dict(page=paginater.prev_page))}}"'{{pass}}
+               class="btn btn-secondary btn-sm {{if not paginater.has_prev:}}disabled{{pass}}"><span
                     class="glyphicon glyphicon glyphicon-menu-left"></span></button>
-            <button type="button" class="btn btn-secondary btn-sm"><span
+            <button type="button"{{if paginater.has_next:}} onclick='location.href="{{=URL(vars=dict(page=paginater.next_page))}}"'{{pass}}
+               class="btn btn-secondary btn-sm {{if not paginater.has_next:}}disabled{{pass}}"><span
                     class="glyphicon glyphicon glyphicon-menu-right"></span></button>
         </div>
-        <small class="text-muted pull-right">Page 1 of 1&nbsp;</small>
+        <small class="text-muted pull-right">Page {{=paginater.page}} of {{=paginater.pages}}&nbsp;</small>
         <div class="clearfix"></div> {{#http://jsfiddle.net/b2m38br9/1/}}
     </div>
 </div>
@@ -79,7 +82,8 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button>
-                <h4 class="modal-title"><span class="glyphicon glyphicon-plus"></span> Add {{=request.function.capitalize()}}</h4>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-plus"></span>
+                    Add {{=request.function.capitalize()}}</h4>
             </div>
             <div class="modal-body">
             {{form.element('div#submit_record__row').element('div.col-sm-9')['_class']="col-sm-12"}}    {{# https://groups.google.com/forum/#!topic/web2py/bgDJWVmhS5Y}}
@@ -92,9 +96,7 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<script>
-    $(function () {
-                $('[data-toggle="tooltip"]').tooltip()
-            }
-    )
-</script>
+{{block page_js}}
+{{include '__page_js/tooltip.html'}}
+{{include '__page_js/flash_modal.html'}}
+{{end}}
