@@ -340,3 +340,7 @@ div.w2p_flash.alert {
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
     color: crimson;
 }
+
+a.table_header_links {
+    color: inherit;";
+}

@@ -25,11 +25,11 @@ def referral():
         response.flash_modal = "#add_referral_modal"
 
     query_set = db(db.referral.id > 0)
-    paginater = Paginater(request, query_set)
-    rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, join=[
+    paginater = Paginater(request, query_set, db)
+    rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, left=[  # left join ensures query_set.count() == len(rows)
         db.patient.on(db.referral.patient == db.patient.id),
         db.site.on(db.referral.referral_destination == db.site.id),
         db.provider.on(db.referral.ordering_provider == db.provider.id),
-    ], limitby=paginater.limitby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
+    ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
     return dict(form=form, rows=rows, paginater=paginater)
