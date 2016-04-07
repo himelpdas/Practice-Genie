@@ -22,6 +22,7 @@ class Paginater():
         self.order_table = None
         self.order_field = None
         self.order_links = {}
+        self.order_reverse = False
 
         self.item_count = None
         self.pages = None
@@ -34,9 +35,10 @@ class Paginater():
         self.set_paging()
 
     def set_ordering(self):
-        order_table, self.order_field = self._request.vars["orderby"].split(".") if self._request.vars["orderby"] else (self._request.function, "id")
-        self.order_reverse =  "~" in order_table
-        self.order_table = order_table.strip("~")
+        order_string = self._request.vars["orderby"] or (self._request.function + ".id")
+        self.order_reverse = "~" in order_string
+        order_string = order_string.strip("~")
+        self.order_table, self.order_field = order_string.split(".")
         if self.order_reverse:
             self.orderby = ~self._db[self.order_table][self.order_field]
         else:
@@ -51,7 +53,7 @@ class Paginater():
             for table_field in self._db[table_name].fields:
                 table_field_is_order_field = (table_name == self.order_table) & (self.order_field == table_field)
                 self.order_links.setdefault(table_name, {}).setdefault(table_field, {}).update({  # http://stackoverflow.com/questions/12905999/python-dict-how-to-create-key-or-append-an-element-to-key
-                    "url": URL(vars=dict(self._request.vars.items() + {'orderby':("" if self.order_reverse else "~") + "%s.%s"%(table_name, table_field)}.items())),
+                    "url": URL(vars=dict(self._request.vars.items() + {'orderby': ("" if (not table_field_is_order_field or self.order_reverse) else "~") + "%s.%s"%(table_name, table_field)}.items())),  # flipping order
                     "arrow": SPAN(_class="text-info glyphicon glyphicon-arrow-" + ("down" if self.order_reverse else "up")) if table_field_is_order_field else ""
                 })
 
