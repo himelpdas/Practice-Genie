@@ -8,7 +8,7 @@
         </button>
         <ul class="dropdown-menu">
             {{for each in paginater.item_limits:}}
-                <li><a href="{{=URL(vars=dict(request.vars.items()+{'per':each, 'page':0}.items()))}}">{{=each}} per page {{if str(each)==(request.vars["per"] or str(paginater.item_limits[0])):}}<span class="glyphicon glyphicon-ok"></span>{{pass}}</a></li>
+                <li><a href="{{=URL(vars=dict(request.vars.items()+{'per':each, 'page':0}.items()))}}">{{=each}} per page {{if str(each)==(request.vars["per"] or str(paginater.item_limits[1])):}}<span class="glyphicon glyphicon-ok"></span>{{pass}}</a></li>
             {{pass}}  {{# keep at page 0, as switching from 5 per page at last page, then switching to 50 per page will result in, ie., page 9 of 1.}}
         </ul>
     </div>
