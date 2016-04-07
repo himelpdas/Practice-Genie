@@ -1,0 +1,11 @@
+<script>$(document).ready(function () {
+
+    var state = true;
+
+    $('table .glyphicon-check').on('click', function (click_event) {
+        click_event.preventDefault();  // http://goo.gl/IKotKi
+        $('input.table_checkbox').prop("checked", state);
+        state = !state;
+    })
+});
+</script>
