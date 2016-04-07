@@ -61,7 +61,7 @@ class Paginater():
         self.page = (int(self._request.vars["page"] or 0))
         self.items_per_page = (int(self._request.vars["per"] or Paginater.item_limits[0]))
         if not self.items_per_page in Paginater.item_limits:
-            self.items_per_page = Paginater.item_limits[0]
+            self.items_per_page = Paginater.item_limits[1]
         self.limitby=(self.page*self.items_per_page,(self.page+1)*self.items_per_page)  # 1*5 <-> 2*5+1
 
         self.item_count = self._query_set.count()

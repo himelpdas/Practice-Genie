@@ -344,3 +344,7 @@ div.w2p_flash.alert {
 a.table_header_links {
     color: inherit;";
 }
+
+.separator_pipe {
+    opacity: 0.3;
+}

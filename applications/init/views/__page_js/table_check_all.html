@@ -3,7 +3,7 @@
     var state = true;
 
     $('table .glyphicon-check').on('click', function (click_event) {
-        click_event.preventDefault();  // http://goo.gl/IKotKi
+        click_event.preventDefault();  // http://goo.gl/IKotKi | prevent from jumping to top of page because of href="#"
         $('input.table_checkbox').prop("checked", state);
         state = !state;
     })
