@@ -5,11 +5,18 @@ db.define_table("patient",
     auth.signature,
 )
 
-#db.patient.first_name.widget=SQLFORM.widgets.autocomplete(request, db.patient.first_name, limitby=(0,10), min_length=1)
+db.patient.first_name.widget = SQLFORM.widgets.autocomplete(request, db.patient.first_name,
+                                                          limitby=(0, 10), min_length=0, distinct=True)
+db.patient.last_name.widget = SQLFORM.widgets.autocomplete(request, db.patient.last_name,
+                                                         limitby=(0, 10), min_length=0, distinct=True)
+db.patient.date_of_birth.widget = SQLFORM.widgets.autocomplete(request, db.patient.date_of_birth,
+                                                             limitby=(0, 10), min_length=0, distinct=True)  # according to the souce, at_beginning True uses field.like(<beginning>%), where as False uses field.contains(<any part>)
+
 
 db.define_table("site",
     Field('name'),
     Field('phone', requires=IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$')),
+    Field('fax', requires=IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$')),
     Field('address'),
     Field('city'),
     Field('district', label="State"),  # should not use reserved keywords like state
@@ -25,7 +32,7 @@ db.define_table("provider",
     Field('site', "reference site", requires=IS_IN_DB(db, db.site, '%(name)s')),
     Field('email', requires=IS_EMAIL()),
     Field('phone', requires=IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$')),
-    Field('ext', requires=IS_EMPTY_OR(IS_INT_IN_RANGE(0,10000))),
+    Field('ext', requires=IS_EMPTY_OR(IS_INT_IN_RANGE(0, 10000))),
     auth.signature,
 )
 
