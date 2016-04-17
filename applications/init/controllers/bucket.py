@@ -1,6 +1,7 @@
 import on_validation
 from Paginater import Paginater
 
+
 @auth.requires_login()
 def referral():
     """
@@ -11,7 +12,7 @@ def referral():
     return auth.wiki()
     """
     #response.flash = T("Under Construction!")
-    form = SQLFORM.factory(db.patient, db.referral, buttons = [
+    form = SQLFORM.factory(db.patient, db.referral, hidden={"_update": 0}, buttons=[
         TAG.button('Cancel', _type="button", _class="btn btn-default-outline btn-sm pull-right", **{'_data-dismiss' : 'modal'}),
         TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right", _style="margin-right:5px;"),
     ])  # to combine multiple tables you can use SQLFORM.factory (See: One form for multiple tables) or form[0].insert (see: Adding extra form elements to SQLFORM)
@@ -19,10 +20,16 @@ def referral():
     if form.process(onvalidation=on_validation.beautify_name).accepted:
         patient_id = db.patient.update_or_insert(**db.patient._filter_fields(form.vars))
         form.vars.patient = patient_id  # this is a field in referral
-        referral_id = db.referral.insert(**db.referral._filter_fields(form.vars))
-        response.flash='Referral successfully added'
+        update_id = int(request.post_vars['_update'])  # cannot get hidden fields from form.vars
+        if not update_id:  # 0 is false
+            db.referral.insert(**db.referral._filter_fields(form.vars))
+            response.flash = 'Referral added.'
+        else:
+            # todo - test for permission if user has right to update id
+            db(db.referral.id == update_id).update(**db.referral._filter_fields(form.vars))
+            response.flash = 'Referral updated.'
     elif form.errors:
-        response.flash_modal = "#add_referral_modal"
+        response.flash_modal = "#object_modal"
 
     query_set = db(db.referral.id > 0)
     paginater = Paginater(request, query_set, db)

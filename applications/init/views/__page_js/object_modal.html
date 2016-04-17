@@ -1,0 +1,21 @@
+<script>
+
+    function set_object_modal_title(symbol, action) {
+        $("#object_modal .modal-title").html('<span class="glyphicon glyphicon-' + symbol + '"></span> '+ action + " {{=request.function.capitalize()}}");
+    }
+
+    $(function(){
+        $("[data-edit-object]").click(function(){
+            set_object_modal_title("plus", "Edit");
+            $('#object_modal').modal('show')
+        })
+    });
+
+    $(function(){
+        $("#add_object_btn").click(function(){
+            set_object_modal_title("plus", "Add");
+            $('#object_modal').modal('show')
+        })
+    });
+
+</script>
