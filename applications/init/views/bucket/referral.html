@@ -1,5 +1,19 @@
 {{extend 'layout.html'}}
 {{from gluon.serializers import json}}
+
+<script>
+    function set_object_form_vals() {
+        $("input[name='first_name']").val(arguments[0]);
+        $("input[name='last_name']").val(arguments[1]);
+        $("input[name='date_of_birth']").val(arguments[2]);
+        $("select[name='ordering_provider']").val(arguments[3]);
+        $("input[name='appointment_date']").val(arguments[4]);
+        $("select[name='referral_destination']").val(arguments[5]);
+        $("input[name='urgent']").prop("checked",arguments[6]);
+        $("input[name='_update']").val(arguments[7])
+    }
+</script>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="pull-left">
@@ -52,17 +66,10 @@
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
                         <script>
-                            $('[data-edit-object="{{=row.referral.id}}"]').click(function(){
-                                $("input[name='first_name']").val("{{=row.patient.first_name}}");
-                                $("input[name='last_name']").val("{{=row.patient.last_name}}");
-                                $("input[name='date_of_birth']").val("{{=row.patient.date_of_birth}}");
-                                $("select[name='ordering_provider']").val("{{=row.referral.ordering_provider}}");
-                                $("input[name='appointment_date']").val("{{=row.referral.appointment_date}}");
-                                $("select[name='referral_destination']").val("{{=row.referral.referral_destination}}");
+                            $('[data-edit-object="{{=row.referral.id}}"]').click(function() {
                                 var urgent;
                                 {{=XML("urgent="+json(row.referral.urgent)+";")}}
-                                $("input[name='urgent']").prop("checked",urgent);
-                                $("input[name='_update']").val("{{=row.referral.id}}")
+                                set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row.referral.ordering_provider}}", "{{=row.referral.appointment_date}}", "{{=row.referral.referral_destination}}", urgent, "{{=row.referral.id}}")
                             });
                         </script>
                         <button type="button" class="btn btn-secondary btn-sm"><span
@@ -95,7 +102,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button>
-                <h4 class="modal-title"></h4>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-ban-circle"></span> Error</h4>  {{# if modal pops up without button press, then it is error}}
             </div>
             <div class="modal-body">
             {{form.element('div#submit_record__row').element('div.col-sm-9')['_class']="col-sm-12"}}    {{# https://groups.google.com/forum/#!topic/web2py/bgDJWVmhS5Y}}
@@ -110,6 +117,21 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<script>
+    default_args = [$("input[name='first_name']").val(),
+    $("input[name='last_name']").val(),
+    $("input[name='date_of_birth']").val(),
+    $("select[name='ordering_provider']").val(),
+    $("input[name='appointment_date']").val(),
+    $("select[name='referral_destination']").val(),
+    $("input[name='urgent']").prop("checked"),
+    $("input[name='_update']").val()];  {{# val is 0}}
+
+    $("#add_object_btn").click(function(){
+        set_object_form_vals.apply(null, default_args);
+    })
+</script>
 
 {{block page_js}}
 {{include '__page_js/tooltip.html'}}

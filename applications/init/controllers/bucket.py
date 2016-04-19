@@ -17,10 +17,10 @@ def referral():
         TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right", _style="margin-right:5px;"),
     ])  # to combine multiple tables you can use SQLFORM.factory (See: One form for multiple tables) or form[0].insert (see: Adding extra form elements to SQLFORM)
 
+    update_id = int(request.post_vars['_update'] or -1)  # cannot get hidden fields from form.vars
     if form.process(onvalidation=on_validation.beautify_name).accepted:
         patient_id = db.patient.update_or_insert(**db.patient._filter_fields(form.vars))
         form.vars.patient = patient_id  # this is a field in referral
-        update_id = int(request.post_vars['_update'])  # cannot get hidden fields from form.vars
         if not update_id:  # 0 is false
             db.referral.insert(**db.referral._filter_fields(form.vars))
             response.flash = 'Referral added.'
@@ -29,7 +29,7 @@ def referral():
             db(db.referral.id == update_id).update(**db.referral._filter_fields(form.vars))
             response.flash = 'Referral updated.'
     elif form.errors:
-        response.flash_modal = "#object_modal"
+        response.flash_modal = dict(flash="#object_modal", update_id=update_id)
 
     query_set = db(db.referral.id > 0)
     paginater = Paginater(request, query_set, db)

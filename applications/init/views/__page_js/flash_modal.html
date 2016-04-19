@@ -1,7 +1,8 @@
 {{if response.flash_modal:}}
 <script>
     $(function () {
-                $('{{=response.flash_modal}}').modal('show')
+                $('{{=response.flash_modal["flash"]}}').modal('show');
+                $("input[name='_update']").val('{{=response.flash_modal["update_id"]}}');
             }
     )
 </script>

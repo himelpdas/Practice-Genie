@@ -1,3 +1,5 @@
+{{old_var_items = filter(lambda x: "_" not in x[0],request.vars.items())}}  {{# get rid of crap like _formkey}}
+
 <div class="btn-group pull-right"
      role="group">  {{# The .btn classes are designed to be used with the <button> element. However, you can also use these classes on <a> or <input> elements. When using button classes on <a> elements that are used to trigger in-page functionality (like collapsing content), rather than linking to new pages or sections within the current page, these links should be given a role="button" to appropriately convey their purpose to assistive technologies such as screen readers.}}
     <div class="btn-group dropup" role="group">
@@ -8,7 +10,7 @@
         </button>
         <ul class="dropdown-menu">
             {{for each in paginater.item_limits:}}
-                <li><a href="{{=URL(vars=dict(request.vars.items()+{'per':each, 'page':0}.items()))}}">{{=each}} per page {{if str(each)==(request.vars["per"] or str(paginater.item_limits[1])):}}<span class="glyphicon glyphicon-ok"></span>{{pass}}</a></li>
+                <li><a href="{{=URL(vars=dict(old_var_items+{'per':each, 'page':0}.items()))}}">{{=each}} per page {{if str(each)==(request.vars["per"] or str(paginater.item_limits[1])):}}<span class="glyphicon glyphicon-ok"></span>{{pass}}</a></li>
             {{pass}}  {{# keep at page 0, as switching from 5 per page at last page, then switching to 50 per page will result in, ie., page 9 of 1.}}
         </ul>
     </div>
@@ -20,16 +22,16 @@
         </button>
         <ul class="dropdown-menu">
             {{for each in xrange(paginater.pages+1):}}
-                <li><a href="{{=URL(vars=dict(request.vars.items()+{'page':each}.items()))}}">Page {{=each}} {{if str(each)==(request.vars["page"] or "0"):}}<span class="glyphicon glyphicon-ok"></span>{{pass}}</a></li>
+                <li><a href="{{=URL(vars=dict(old_var_items + {'page':each}.items()))}}">Page {{=each}} {{if str(each)==(request.vars["page"] or "0"):}}<span class="glyphicon glyphicon-ok"></span>{{pass}}</a></li>
             {{pass}}
         </ul>
     </div>
     <button type="button"{{if paginater.has_prev:}}
-            onclick='location.href="{{=URL(vars=dict(request.vars.items() + {'page':paginater.prev_page}.items()))}}"'{{pass}}
+            onclick='location.href="{{=URL(vars=dict(old_var_items + {'page':paginater.prev_page}.items()))}}"'{{pass}}
             class="btn btn-secondary btn-sm {{if not paginater.has_prev:}}disabled{{pass}}"><span
             class="glyphicon glyphicon glyphicon-menu-left"></span></button>
     <button type="button"{{if paginater.has_next:}}
-            onclick='location.href="{{=URL(vars=dict(request.vars.items() + {'page':paginater.next_page}.items()))}}"'{{pass}}
+            onclick='location.href="{{=URL(vars=dict(old_var_items + {'page':paginater.next_page}.items()))}}"'{{pass}}
             class="btn btn-secondary btn-sm {{if not paginater.has_next:}}disabled{{pass}}"><span
             class="glyphicon glyphicon glyphicon-menu-right"></span></button>
 </div>
