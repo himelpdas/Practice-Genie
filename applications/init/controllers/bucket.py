@@ -1,8 +1,8 @@
 import on_validation
 from Paginater import Paginater
 
-
 @auth.requires_login()
+#@minify  # todo - use on deploy
 def referral():
     """
     example action using the internationalization operator T and flash
