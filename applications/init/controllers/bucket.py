@@ -22,7 +22,6 @@ def referral():
         patient_id = db.patient.update_or_insert(**db.patient._filter_fields(form.vars))
         form.vars.patient = patient_id  # this is a field in referral
         if patient_id:  # patient id will be None if no changes were detected for update or insert
-            response.flash = 'No changes were made.'
             if not update_id:  # 0 is false
                 db.referral.insert(**db.referral._filter_fields(form.vars))
                 response.flash = 'Referral added.'
@@ -30,6 +29,9 @@ def referral():
                 # todo - test for permission if user has right to update id
                 db(db.referral.id == update_id).update(**db.referral._filter_fields(form.vars))
                 response.flash = 'Referral updated.'
+        else:
+            response.flash = 'No changes were made.'
+
     elif form.errors:
         response.flash_modal = dict(flash="#object_modal", update_id=update_id)
 
