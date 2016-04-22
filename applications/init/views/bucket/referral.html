@@ -1,5 +1,6 @@
 {{extend 'layout.html'}}
 {{from gluon.serializers import json}}
+{{import random}}
 
 <script>
     function set_object_form_vals() {
@@ -17,7 +18,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="pull-left">
-            <span class="panel-title"><span class="glyphicon glyphicon-triangle-right"></span>{{=request.function}} {{=request.controller}}</span> <span class="separator_pipe">|</span> <a href="#">1st Attempt</a> <span class="separator_pipe">|</span> <a href="#">2nd Attempt</a> <span class="separator_pipe">|</span> <a href="#">Final Attempt</a>
+            <span class="panel-title"><span class="glyphicon glyphicon-triangle-right"></span>{{=request.function}} {{=request.controller}}</span> <span class="separator_pipe">|</span> <a href="#">Archive</a>
         </div>
         <button id="add_object_btn" type="button" class="btn btn-primary pull-right btn-sm" {{''' data-toggle="modal" data-target="#object_modal" '''}} >
             <span class="glyphicon glyphicon-plus"></span>
@@ -26,8 +27,8 @@
         <div class="clearfix"></div>
     </div>
     <div class="panel-body" style="overflow-x: auto;"> {{# otherwise it will overflow beyond panel-body when resized}}
-        <table class="table table-striped table-hover table-bordered table-condensed">
-            <tr>
+        <table class="table table-hover table-bordered table-condensed {{if 'archive' in request.args:}}table-striped{{pass}}">
+            <tr class="active">
                 <th><a href="#" class="table_header_links"><span class="glyphicon glyphicon-check"></span></a></th>
                 <th><a href="{{=paginater.order_links["referral"]["urgent"]["url"]}}" class="table_header_links"><span class="glyphicon glyphicon-flag"></span></a> {{=paginater.order_links["referral"]["urgent"]["arrow"]}}</th>
                 <th><a href="{{=paginater.order_links["referral"]["id"]["url"]}}" class="table_header_links">Order Date</a> {{=paginater.order_links["referral"]["id"]["arrow"]}}</th>
@@ -37,10 +38,34 @@
                 <th><a href="{{=paginater.order_links["site"]["name"]["url"]}}" class="table_header_links">Referral Destination</a> {{=paginater.order_links["site"]["name"]["arrow"]}}</th>
                 <th><a href="{{=paginater.order_links["referral"]["appointment_date"]["url"]}}" class="table_header_links">Appointment Date</a> {{=paginater.order_links["referral"]["appointment_date"]["arrow"]}}</th>
                 <th><a href="#" class="table_header_links">Status</a></th>
-                <th class="col-md-1"><input class="form-control input-sm" type="text" placeholder="&#128269; Search Patient"></th>
+                <th class="col-md-1">
+                    <div class="form-group-sm {{if request.vars.patient:}}has-feedback{{pass}}">
+                        <input id="patient_search_input" class="form-control input-sm" type="text" placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
+                        {{if request.vars.patient:}}
+                            <span id="clearer" class="glyphicon glyphicon-remove-circle form-control-feedback text-danger"></span>
+                            <script>
+                                $("#clearer").click(function () {
+                                    {{vars_cleared_search = request.vars.copy()
+                                    vars_cleared_search.pop("patient", None)}}
+                                    window.location = '{{=URL(vars=vars_cleared_search)}}';
+                                });
+                            </script>
+                        {{pass}}
+                    </div>
+                    <script> {{# http://stackoverflow.com/questions/8981637/submit-form-with-enter-key}}
+                    {{if request.vars.patient:}}
+                        $("#patient_search_input").val("{{=request.vars.patient}}");
+                    {{pass}}
+                        $("#patient_search_input").keypress(function(event) {
+                            if (event.which == 13) {
+                                window.location = '{{=URL() + "?patient="}}' + $(this).val();
+                            }
+                        });
+                    </script>
+                </th>
             </tr>
         {{for i, row in enumerate(rows):}}
-            <tr>
+            <tr class="{{=random.choice(['attempting', 'first_attempt', 'second_attempt', 'third_attempt', "","","","",""])}}">
                 <td><input type="checkbox" class="table_checkbox" title="{{=request.function.capitalize()}} ID {{=row.referral.id}}"></td>
                 <td>
                 {{if row.referral.urgent:}}

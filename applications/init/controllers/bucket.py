@@ -36,7 +36,18 @@ def referral():
     elif form.errors:
         response.flash_modal = dict(flash="#object_modal", update_id=update_id)
 
-    query_set = db(db.referral.id > 0)
+    query = db.referral.id > 0
+    print request.vars
+    if request.vars.patient:
+        patient = map(lambda each: each.strip(), request.vars.patient.split(","))
+        patient_last = patient[0]
+        query &= db.patient.last_name.like(patient_last, case_sensitive=False)
+        if len(patient) > 1:
+            patient_first = patient[1]
+            query &= db.patient.first_name.like(patient_first, case_sensitive=False)
+
+    query_set = db(query)
+
     paginater = Paginater(request, query_set, db)
     rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, left=[  # left join ensures query_set.count() == len(rows)
         db.patient.on(db.referral.patient == db.patient.id),

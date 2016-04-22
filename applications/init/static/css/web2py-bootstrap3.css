@@ -348,3 +348,53 @@ a.table_header_links {
 .separator_pipe {
     opacity: 0.3;
 }
+
+
+/*http://jan.moesen.nu/code/html-css/google-highlighting/*/
+.table>tbody>tr.attempting>td {  /*taken from css found for <td class="active, warning, success, danger">*/
+    background-color: #DBF0F7;
+}
+
+.table>tbody>tr.attempting:hover>td {
+    background-color: #C9EAF3;
+}
+
+.table>tbody>tr.first_attempt>td {
+    background-color: #E3FBE9;
+}
+
+.table>tbody>tr.first_attempt:hover>td {
+    background-color: #D6F8DE;
+}
+
+.table>tbody>tr.second_attempt>td {  /*taken from css found for <td class="active, warning, success, danger">*/
+    background-color: #FFFFD7;
+}
+
+.table>tbody>tr.second_attempt:hover>td {
+    background-color: #FFFFB5;
+}
+
+.table>tbody>tr.third_attempt>td {  /*taken from css found for <td class="active, warning, success, danger">*/
+    background-color: #FFECF5;
+}
+
+.table>tbody>tr.third_attempt:hover>td {
+    background-color: #FFDFEF;
+}
+
+/* form control feedback http://formvalidation.io/examples/clearing-field-when-clicking-icon */
+
+#clearer{
+    pointer-events: auto;
+}
+
+#clearer:hover {
+    cursor: pointer;
+}
+
+/* because when input feedback icon appears, text gets cut-off */
+
+.has-feedback .form-control {
+    padding-right: 0;
+}
