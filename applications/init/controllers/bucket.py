@@ -1,5 +1,6 @@
 import on_validation
 from Paginater import Paginater
+import os
 
 @auth.requires_login()
 #@minify  # todo - use on deploy
@@ -44,3 +45,9 @@ def referral():
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
     return dict(form=form, rows=rows, paginater=paginater)
+
+'''
+@auth.requires_login()  # https://groups.google.com/forum/#!topic/web2py/zzLVxaQZn7U
+def download():
+    return response.stream(open(os.path.join(request.folder, 'private_static', os.path.normpath(request.args(0)))))
+'''
