@@ -35,20 +35,25 @@ def referral():
     elif form.errors:
         response.flash_modal = dict(flash="#object_modal", update_id=update_id)
 
-    #OUTCOME FORM
-    db.referral.outcome.readable = db.referral.outcome.writable = True  #DO THIS AFTER OUTCOME FORM
-    db.referral.outcome.default = "received"
-    outcome_form = SQLFORM.factory(db.referral['outcome'], _id="outcome_form", hidden={"_close": 0},
+    #conclusion FORM
+    db.referral.conclusion.readable = db.referral.conclusion.writable = True  #DO THIS AFTER conclusion FORM
+    db.referral.conclusion.default = "received"
+    conclusion_form = SQLFORM.factory(db.referral['conclusion'], _id="conclusion_form", hidden={"_conclude": 0},
         buttons=[TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right")]
     )
-    close_id = int(request.post_vars['_close'] or -1)
-    if outcome_form.process(formname="outcome_form").accepted:
+    close_id = int(request.post_vars['_conclude'] or -1)
+    if conclusion_form.process(formname="conclusion_form").accepted:
         if close_id:
-            db(db.referral.id == close_id).update(**outcome_form.vars)
+            db(db.referral.id == close_id).update(**conclusion_form.vars)
         response.flash = "Referral Deleted."
 
     #QUERY
-    query = (db.referral.id > 0) & (db.referral.outcome == None)  # You can't compare NULL values using <> in SQL https://groups.google.com/forum/#!topic/web2py/MgXAPqEGoUI
+    query = db.referral.id > 0
+    if "archive" in request.args:
+        query &= db.referral.conclusion != "deleted"
+    else:
+        query &= db.referral.conclusion == None  # You can't compare NULL values using <> in SQL https://groups.google.com/forum/#!topic/web2py/MgXAPqEGoUI
+
     if request.vars.patient:
         patient = map(lambda each: each.strip(), request.vars.patient.split(","))
         patient_last = patient[0]
@@ -64,7 +69,7 @@ def referral():
         db.provider.on(db.referral.ordering_provider == db.provider.id),
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
-    return dict(form=form, outcome_form=outcome_form, rows=rows, paginater=paginater)
+    return dict(form=form, conclusion_form=conclusion_form, rows=rows, paginater=paginater)
 
 '''
 @auth.requires_login()  # https://groups.google.com/forum/#!topic/web2py/zzLVxaQZn7U

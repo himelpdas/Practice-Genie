@@ -86,7 +86,7 @@
                 <td>
                     <div class="btn-group" role="group"
                          style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
-                        <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-folder-open'></span>&nbsp<span class='pull-right'>Close {{=request.function.capitalize()}}</span>" data-toggle="tooltip"
+                        <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-folder-open'></span>&nbsp<span class='pull-right'>Conclude {{=request.function.capitalize()}}</span>" data-toggle="tooltip"
                                 data-archive-object="{{=row.referral.id}}">
                             <span class="glyphicon glyphicon-folder-open"></span>
                         </button>
@@ -126,11 +126,11 @@
 </div>
 
 <div id="popover-content" class="hide">
-{{=outcome_form.custom.begin}}
-{{=outcome_form.custom.widget.outcome}}
-{{=outcome_form.custom.submit}}
-{{#=outcome_form.hidden_fields()}}
-{{=outcome_form.custom.end}}
+{{=conclusion_form.custom.begin}}
+{{=conclusion_form.custom.widget.conclusion}}
+{{=conclusion_form.custom.submit}}
+{{#=conclusion_form.hidden_fields()}}
+{{=conclusion_form.custom.end}}
 <div class="clearfix"></div>
 </div>
 
@@ -183,7 +183,7 @@
             html : true,
             placement : 'left',
             container: 'body',  {{# container: 'body'. This option is particularly useful in that it allows you to position the popover in the flow of the document near the triggering element - which will prevent the popover from floating away from the triggering element during a window resize.}}
-            title: "<span class='glyphicon glyphicon-folder-close'></span> Close {{=request.function.capitalize()}}",
+            title: "<span class='glyphicon glyphicon-folder-close'></span> Conclude {{=request.function.capitalize()}}",
             content: function() {
               return $("#popover-content").html();
             },
@@ -192,13 +192,13 @@
             $(this).popover('toggle');
             $('[data-archive-object]').not(this).popover('hide');
         }).on('shown.bs.popover', function(e) {
-            $("input[name='_close']").val($(this).attr('data-archive-object'))
+            $("input[name='_conclude']").val($(this).attr('data-archive-object'))
         });
         $("html").click(function(e){  {{# hide popover when clicking anywhere outside of button or child icon}}
             var obj = $(e.target);
             //console.log(obj);
             if (!(obj.closest('[data-archive-object]').length ||  {{# use closest instead of parent as closest checks the start element also}}
-                    obj.closest('#outcome_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
+                    obj.closest('#conclusion_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
                     obj.closest('.popover').length
             )){  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
                 $('[data-archive-object]').popover('hide');
