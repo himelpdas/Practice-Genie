@@ -13,7 +13,7 @@ def referral():
     return auth.wiki()
     """
     #response.flash = T("Under Construction!")
-    form = SQLFORM.factory(db.patient, db.referral, hidden={"_update": 0}, buttons=[
+    form = SQLFORM.factory(db.patient, db.referral, _id="object_form", hidden={"_update": 0}, buttons=[
         TAG.button('Cancel', _type="button", _class="btn btn-default-outline btn-sm pull-right", **{'_data-dismiss' : 'modal'}),
         TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right", _style="margin-right:5px;"),
     ])  # to combine multiple tables you can use SQLFORM.factory (See: One form for multiple tables) or form[0].insert (see: Adding extra form elements to SQLFORM)
@@ -55,7 +55,13 @@ def referral():
         db.provider.on(db.referral.ordering_provider == db.provider.id),
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
-    return dict(form=form, rows=rows, paginater=paginater)
+    db.referral.outcome.readable = db.referral.outcome.writable = True
+    db.referral.outcome.default = "received"
+    outcome_form = SQLFORM.factory(db.referral['outcome'], _id="outcome_form",
+        buttons=[TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right")]
+    )
+
+    return dict(form=form, outcome_form=outcome_form, rows=rows, paginater=paginater)
 
 '''
 @auth.requires_login()  # https://groups.google.com/forum/#!topic/web2py/zzLVxaQZn7U

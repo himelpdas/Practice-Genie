@@ -18,7 +18,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="pull-left">
-            <span class="panel-title"><span class="glyphicon glyphicon-triangle-right"></span>{{=request.function}} {{=request.controller}}</span> <span class="separator_pipe">|</span> <a href="#">Archive</a>
+            <span class="panel-title"><span class="glyphicon glyphicon-triangle-right"></span>{{=request.function}} {{=request.controller}}</span> <span class="separator_pipe">|</span> <a href="{{=URL(args=['archive'])}}">Archive</a>
         </div>
         <button id="add_object_btn" type="button" class="btn btn-primary pull-right btn-sm" {{''' data-toggle="modal" data-target="#object_modal" '''}} >
             <span class="glyphicon glyphicon-plus"></span>
@@ -82,21 +82,21 @@
                 <td>
                     <div class="btn-group" role="group"
                          style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
-                        <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-folder-close" title="Archive"
-                                data-toggle="tooltip"
-                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                data-archive-object="{{=row.referral.id}}">
+                            <span class="glyphicon glyphicon-folder-open"></span>
+                        </button>
                         <button type="button" class="btn btn-secondary btn-sm" data-edit-object="{{=row.referral.id}}"><span
                                 class="glyphicon glyphicon-edit" title="Edit"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
-                        <script>
-                            $('[data-edit-object="{{=row.referral.id}}"]').click(function() {
-                                var urgent;
-                                {{=XML("urgent="+json(row.referral.urgent)+";")}}
-                                set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row.referral.ordering_provider}}", "{{=row.referral.appointment_date}}", "{{=row.referral.referral_destination}}", urgent, "{{=row.referral.id}}")
-                            });
-                        </script>
+                            <script>
+                                $('[data-edit-object="{{=row.referral.id}}"]').click(function() {
+                                    var urgent;
+                                    {{=XML("urgent="+json(row.referral.urgent)+";")}}
+                                    set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row.referral.ordering_provider}}", "{{=row.referral.appointment_date}}", "{{=row.referral.referral_destination}}", urgent, "{{=row.referral.id}}")
+                                });
+                            </script>
                         <button type="button" class="btn btn-secondary btn-sm"><span
                                 class="glyphicon glyphicon-duplicate" title="Notes"
                                 data-toggle="tooltip"
@@ -113,12 +113,20 @@
     </div>
     <div class="panel-footer">
         <button type="button" class="btn btn-success btn-sm pull-left"><span
-                class="glyphicon glyphicon glyphicon-share-alt"></span> Send Faxes
+                class="glyphicon glyphicon glyphicon-print"></span> Send Faxes
         </button>
 
         {{include '__page_html/paginate.html'}}
 
     </div>
+</div>
+
+<div id="popover-content" class="hide">
+{{=outcome_form.custom.begin}}
+{{=outcome_form.custom.widget.outcome}}
+{{=outcome_form.custom.submit}}
+{{=outcome_form.custom.end}}
+<div class="clearfix"></div>
 </div>
 
 <div id="object_modal" class="modal fade" tabindex="-1" role="dialog">
@@ -159,8 +167,36 @@
 </script>
 
 {{block page_js}}
+{{super}}
 {{include '__page_js/tooltip.html'}}
 {{include '__page_js/object_modal.html'}}
 {{include '__page_js/flash_modal.html'}}
 {{include '__page_js/table_check_all.html'}}
+<script>
+    $(function(){  {{# has to be in a ready function as many dependencies use ready function too}}
+        $('[data-archive-object]').popover({
+            html : true,
+            placement : 'left',
+            container: 'body',  {{# container: 'body'. This option is particularly useful in that it allows you to position the popover in the flow of the document near the triggering element - which will prevent the popover from floating away from the triggering element during a window resize.}}
+            title: "<span class='glyphicon glyphicon-folder-close'></span> Close {{=request.function.capitalize()}}",
+            content: function() {
+              return $("#popover-content").html();
+            },
+            trigger: 'manual'  {{# http://stackoverflow.com/questions/16150163/show-one-popover-and-hide-other-popovers}}
+        }).on('click', function (e) {
+            $(this).popover('toggle');
+            $('[data-archive-object]').not(this).popover('hide');
+        });
+        $("html").click(function(e){  {{# hide popover when clicking anywhere outside of button or child icon}}
+            var obj = $(e.target);
+            console.log(obj);
+            if (!(obj.closest('[data-archive-object]').length ||
+                    obj.closest('#outcome_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
+                    obj.closest('.popover').length
+            )){  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
+                $('[data-archive-object]').popover('hide');
+            }
+        });
+    });
+</script>
 {{end}}
