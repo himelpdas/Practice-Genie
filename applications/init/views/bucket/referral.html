@@ -82,7 +82,11 @@
                 <td>{{=row.provider.last_name}}, {{=row.provider.first_name}} {{=row.provider.title}}</td>
                 <td>{{=row.site.name}}</td>
                 <td>{{=row.referral.appointment_date}}</td>
-                <td>Sent</td>
+                <td>{{if archive:}}
+                        {{set_to_label = dict(zip(db.referral.conclusion.requires.theset, db.referral.conclusion.requires.labels))}}
+                        {{=set_to_label[row.referral.conclusion]}}
+                    {{else:}}Sent{{pass}}
+                </td>
                 <td>
                     <div class="btn-group" role="group"
                          style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
@@ -123,6 +127,7 @@
         {{include '__page_html/paginate.html'}}
 
     </div>
+
 </div>
 
 <div id="popover-content" class="hide">

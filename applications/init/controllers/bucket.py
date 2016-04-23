@@ -13,6 +13,8 @@ def referral():
     return auth.wiki()
     """
 
+    archive = "archive" in request.args
+
     #OBJECT FORM
     form = SQLFORM.factory(db.patient, db.referral, _id="object_form", hidden={"_update": 0}, buttons=[
         TAG.button('Cancel', _type="button", _class="btn btn-default-outline btn-sm pull-right", **{'_data-dismiss' : 'modal'}),
@@ -49,7 +51,7 @@ def referral():
 
     #QUERY
     query = db.referral.id > 0
-    if "archive" in request.args:
+    if archive:
         query &= db.referral.conclusion != "deleted"
     else:
         query &= db.referral.conclusion == None  # You can't compare NULL values using <> in SQL https://groups.google.com/forum/#!topic/web2py/MgXAPqEGoUI
