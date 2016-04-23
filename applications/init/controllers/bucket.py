@@ -71,7 +71,7 @@ def referral():
         db.provider.on(db.referral.ordering_provider == db.provider.id),
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
-    return dict(form=form, conclusion_form=conclusion_form, rows=rows, paginater=paginater)
+    return dict(form=form, conclusion_form=conclusion_form, rows=rows, paginater=paginater, archive=archive)
 
 '''
 @auth.requires_login()  # https://groups.google.com/forum/#!topic/web2py/zzLVxaQZn7U
