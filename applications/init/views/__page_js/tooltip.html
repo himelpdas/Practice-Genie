@@ -1,6 +1,10 @@
 <script>
     $(function () {
-                $('[data-toggle="tooltip"]').tooltip()
+                $('[data-toggle="tooltip"]').tooltip({
+                    html:true,
+                    container:'body',  {{# prevent jumping of button when tooltip appears}}
+                    trigger:'hover',  {{# default 'hover focus', so clicking button doesn't cause tooltip to stay}}
+                })
             }
     )
 </script>

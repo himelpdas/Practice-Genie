@@ -18,7 +18,11 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="pull-left">
-            <span class="panel-title"><span class="glyphicon glyphicon-triangle-right"></span>{{=request.function}} {{=request.controller}}</span> <span class="separator_pipe">|</span> <a href="{{=URL(args=['archive'])}}">Archive</a>
+            {{if "archive" in request.args:}}
+                {{=A(request.function+' '+request.controller, _href=URL(request.function))+' '+SPAN("|", _class="separator_pipe")+' '+SPAN(SPAN(_class="glyphicon glyphicon-triangle-right")+'Archive', _class="panel-title")}}
+            {{else:}}
+                {{=SPAN(SPAN(_class="glyphicon glyphicon-triangle-right")+request.function+' '+request.controller, _class='panel-title')+' '+SPAN("|", _class="separator_pipe")+' '+A('Archive', _href=URL(args=['archive']))}}
+            {{pass}}
         </div>
         <button id="add_object_btn" type="button" class="btn btn-primary pull-right btn-sm" {{''' data-toggle="modal" data-target="#object_modal" '''}} >
             <span class="glyphicon glyphicon-plus"></span>
@@ -37,7 +41,7 @@
                 <th><a href="{{=paginater.order_links["provider"]["last_name"]["url"]}}" class="table_header_links">Ordering Provider</a> {{=paginater.order_links["provider"]["last_name"]["arrow"]}}</th>
                 <th><a href="{{=paginater.order_links["site"]["name"]["url"]}}" class="table_header_links">Referral Destination</a> {{=paginater.order_links["site"]["name"]["arrow"]}}</th>
                 <th><a href="{{=paginater.order_links["referral"]["appointment_date"]["url"]}}" class="table_header_links">Appointment Date</a> {{=paginater.order_links["referral"]["appointment_date"]["arrow"]}}</th>
-                <th><a href="#" class="table_header_links">Status</a></th>
+                <th><a href="#" class="table_header_links">Outbox</a></th>
                 <th class="col-md-1">
                     <div class="form-group-sm {{if request.vars.patient:}}has-feedback{{pass}}">
                         <input id="patient_search_input" class="form-control input-sm" type="text" placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
@@ -65,7 +69,7 @@
                 </th>
             </tr>
         {{for i, row in enumerate(rows):}}
-            <tr class="{{=random.choice(['attempting', 'first_attempt', 'second_attempt', 'third_attempt', "","","","",""])}}">
+            <tr {{if not "archive" in request.args:}}class="{{=random.choice(['attempting', 'first_attempt', 'second_attempt', 'third_attempt', "","","","",""])}}{{pass}}">
                 <td><input type="checkbox" class="table_checkbox" title="{{=request.function.capitalize()}} ID {{=row.referral.id}}"></td>
                 <td>
                 {{if row.referral.urgent:}}
@@ -82,7 +86,7 @@
                 <td>
                     <div class="btn-group" role="group"
                          style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
-                        <button type="button" class="btn btn-secondary btn-sm"
+                        <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-folder-open'></span>&nbsp<span class='pull-right'>Close {{=request.function.capitalize()}}</span>" data-toggle="tooltip"
                                 data-archive-object="{{=row.referral.id}}">
                             <span class="glyphicon glyphicon-folder-open"></span>
                         </button>
@@ -98,11 +102,11 @@
                                 });
                             </script>
                         <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-duplicate" title="Notes"
+                                class="glyphicon glyphicon-comment" title="Notes"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
                         <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-info-sign" title="Info"
+                                class="glyphicon glyphicon-list-alt" title="Log"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
                     </div>
@@ -125,6 +129,7 @@
 {{=outcome_form.custom.begin}}
 {{=outcome_form.custom.widget.outcome}}
 {{=outcome_form.custom.submit}}
+{{#=outcome_form.hidden_fields()}}
 {{=outcome_form.custom.end}}
 <div class="clearfix"></div>
 </div>
@@ -186,11 +191,13 @@
         }).on('click', function (e) {
             $(this).popover('toggle');
             $('[data-archive-object]').not(this).popover('hide');
+        }).on('shown.bs.popover', function(e) {
+            $("input[name='_close']").val($(this).attr('data-archive-object'))
         });
         $("html").click(function(e){  {{# hide popover when clicking anywhere outside of button or child icon}}
             var obj = $(e.target);
-            console.log(obj);
-            if (!(obj.closest('[data-archive-object]').length ||
+            //console.log(obj);
+            if (!(obj.closest('[data-archive-object]').length ||  {{# use closest instead of parent as closest checks the start element also}}
                     obj.closest('#outcome_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
                     obj.closest('.popover').length
             )){  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
