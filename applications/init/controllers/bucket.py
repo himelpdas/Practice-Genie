@@ -1,5 +1,6 @@
 import on_validation
 from Paginater import Paginater
+import json
 import os
 
 @auth.requires_login()
@@ -71,7 +72,19 @@ def referral():
         db.provider.on(db.referral.ordering_provider == db.provider.id),
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
-    return dict(form=form, conclusion_form=conclusion_form, rows=rows, paginater=paginater, archive=archive)
+
+    #OUTGOING FAX
+    print request.post_vars
+    outgoing_form = SQLFORM.factory(_id="outgoing_form", hidden={'_outgoing' : json.dumps(None)},  # could've used jquery form but SQLFORM provides _formkey to prevent double submission. FORM does not have .process(), it's more of a HTML helper class
+        buttons=[TAG.button(SPAN(_class="glyphicon glyphicon glyphicon-print")+" "+"Send Faxes", _type="submit", _class="btn btn-success btn-sm pull-left")]
+    )
+    if outgoing_form.process(formname="outgoing_form").accepted:
+        outgoing = json.loads(request.post_vars["_outgoing"] or "null")
+        if outgoing:
+            for each_id in outgoing: #VALIDATE
+                print each_id
+
+    return dict(form=form, conclusion_form=conclusion_form, outgoing_form=outgoing_form, rows=rows, paginater=paginater, archive=archive)
 
 '''
 @auth.requires_login()  # https://groups.google.com/forum/#!topic/web2py/zzLVxaQZn7U
