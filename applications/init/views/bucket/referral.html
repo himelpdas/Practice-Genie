@@ -10,7 +10,7 @@
         $("select[name='ordering_provider']").val(arguments[3]);
         $("input[name='appointment_date']").val(arguments[4]);
         $("select[name='referral_destination']").val(arguments[5]);
-        $("input[name='urgent']").prop("checked",arguments[6]);
+        $("input[name='urgent']").prop("checked", arguments[6]);
         $("input[name='_update']").val(arguments[7])
     }
 </script>
@@ -18,13 +18,14 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="pull-left">
-            {{if "archive" in request.args:}}
+        {{if "archive" in request.args:}}
                 {{=A(request.function+' '+request.controller, _href=URL(request.function))+' '+SPAN("|", _class="separator_pipe")+' '+SPAN(SPAN(_class="glyphicon glyphicon-triangle-right")+'Archive', _class="panel-title")}}
             {{else:}}
                 {{=SPAN(SPAN(_class="glyphicon glyphicon-triangle-right")+request.function+' '+request.controller, _class='panel-title')+' '+SPAN("|", _class="separator_pipe")+' '+A('Archive', _href=URL(args=['archive']))}}
             {{pass}}
         </div>
-        <button id="add_object_btn" type="button" class="btn btn-primary pull-right btn-sm" {{''' data-toggle="modal" data-target="#object_modal" '''}} >
+        <button id="add_object_btn" type="button"
+                class="btn btn-primary pull-right btn-sm" {{''' data-toggle="modal" data-target="#object_modal" '''}} >
             <span class="glyphicon glyphicon-plus"></span>
             Add Referral
         </button>
@@ -34,43 +35,55 @@
         <table class="table table-hover table-bordered table-condensed {{if 'archive' in request.args:}}table-striped{{pass}}">
             <tr class="active">
                 <th><a href="#" class="table_header_links"><span class="glyphicon glyphicon-check"></span></a></th>
-                <th><a href="{{=paginater.order_links["referral"]["urgent"]["url"]}}" class="table_header_links"><span class="glyphicon glyphicon-flag"></span></a> {{=paginater.order_links["referral"]["urgent"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["referral"]["id"]["url"]}}" class="table_header_links">Order Date</a> {{=paginater.order_links["referral"]["id"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["patient"]["last_name"]["url"]}}" class="table_header_links">Patient Name</a> {{=paginater.order_links["patient"]["last_name"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["patient"]["date_of_birth"]["url"]}}" class="table_header_links">Date of Birth</a> {{=paginater.order_links["patient"]["date_of_birth"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["provider"]["last_name"]["url"]}}" class="table_header_links">Ordering Provider</a> {{=paginater.order_links["provider"]["last_name"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["site"]["name"]["url"]}}" class="table_header_links">Referral Destination</a> {{=paginater.order_links["site"]["name"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["referral"]["appointment_date"]["url"]}}" class="table_header_links">Appointment Date</a> {{=paginater.order_links["referral"]["appointment_date"]["arrow"]}}</th>
+                <th><a href="{{=paginater.order_links["referral"]["urgent"]["url"]}}" class="table_header_links"><span
+                        class="glyphicon glyphicon-flag"></span></a> {{=paginater.order_links["referral"]["urgent"]["arrow"]}}
+                </th>
+                <th><a href="{{=paginater.order_links["referral"]["id"]["url"]}}" class="table_header_links">Order
+                    Date</a> {{=paginater.order_links["referral"]["id"]["arrow"]}}</th>
+                <th><a href="{{=paginater.order_links["patient"]["last_name"]["url"]}}" class="table_header_links">Patient
+                    Name</a> {{=paginater.order_links["patient"]["last_name"]["arrow"]}}</th>
+                <th><a href="{{=paginater.order_links["patient"]["date_of_birth"]["url"]}}" class="table_header_links">Date
+                    of Birth</a> {{=paginater.order_links["patient"]["date_of_birth"]["arrow"]}}</th>
+                <th><a href="{{=paginater.order_links["provider"]["last_name"]["url"]}}" class="table_header_links">Ordering
+                    Provider</a> {{=paginater.order_links["provider"]["last_name"]["arrow"]}}</th>
+                <th><a href="{{=paginater.order_links["site"]["name"]["url"]}}" class="table_header_links">Referral
+                    Destination</a> {{=paginater.order_links["site"]["name"]["arrow"]}}</th>
+                <th><a href="{{=paginater.order_links["referral"]["appointment_date"]["url"]}}"
+                       class="table_header_links">Appointment
+                    Date</a> {{=paginater.order_links["referral"]["appointment_date"]["arrow"]}}</th>
                 <th><a href="#" class="table_header_links">Outbox</a></th>
                 <th class="col-md-1">
                     <div class="form-group-sm {{if request.vars.patient:}}has-feedback{{pass}}">
-                        <input id="patient_search_input" class="form-control input-sm" type="text" placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
-                        {{if request.vars.patient:}}
-                            <span id="clearer" class="glyphicon glyphicon-remove-circle form-control-feedback text-danger"></span>
-                            <script>
-                                $("#clearer").click(function () {
-                                    {{vars_cleared_search = request.vars.copy()
-                                    vars_cleared_search.pop("patient", None)}}
-                                    window.location = '{{=URL(vars=vars_cleared_search)}}';
-                                });
-                            </script>
-                        {{pass}}
+                        <input id="patient_search_input" class="form-control input-sm" type="text"
+                               placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
+                    {{if request.vars.patient:}}
+                        <span id="clearer"
+                              class="glyphicon glyphicon-remove-circle form-control-feedback text-danger"></span>
+                        <script>
+                            $("#clearer").click(function () {
+                            {{vars_cleared_search = request.vars.copy()
+                            vars_cleared_search.pop("patient", None)}}
+                                window.location = '{{=URL(vars=vars_cleared_search)}}';
+                            });
+                        </script>
+                    {{pass}}
                     </div>
                     <script> {{# http://stackoverflow.com/questions/8981637/submit-form-with-enter-key}}
                     {{if request.vars.patient:}}
-                        $("#patient_search_input").val("{{=request.vars.patient}}");
+                    $("#patient_search_input").val("{{=request.vars.patient}}");
                     {{pass}}
-                        $("#patient_search_input").keypress(function(event) {
-                            if (event.which == 13) {
-                                window.location = '{{=URL() + "?patient="}}' + $(this).val();
-                            }
-                        });
+                    $("#patient_search_input").keypress(function (event) {
+                        if (event.which == 13) {
+                            window.location = '{{=URL() + "?patient="}}' + $(this).val();
+                        }
+                    });
                     </script>
                 </th>
             </tr>
         {{for i, row in enumerate(rows):}}
             <tr {{if not "archive" in request.args:}}class="{{=random.choice(['attempting', 'first_attempt', 'second_attempt', 'third_attempt', "","","","",""])}}{{pass}}">
-                <td><input data-outgoing-object="{{=row.referral.id}}" type="checkbox" class="table_checkbox" title="{{=request.function.capitalize()}} ID {{=row.referral.id}}"></td>
+                <td><input data-outgoing-object="{{=row.referral.id}}" type="checkbox" class="table_checkbox"
+                           title="{{=request.function.capitalize()}} ID {{=row.referral.id}}"></td>
                 <td>
                 {{if row.referral.urgent:}}
                     <span class="glyphicon glyphicon-exclamation-sign text-danger" title="Urgent" data-toggle="tooltip"
@@ -84,34 +97,39 @@
                 <td>{{=row.site.name}}</td>
                 <td>{{=row.referral.appointment_date}}</td>
                 <td>{{if archive:}}
-                        {{set_to_label = dict(zip(db.referral.conclusion.requires.theset, db.referral.conclusion.requires.labels))}}
-                        {{=set_to_label[row.referral.conclusion]}}
-                    {{else:}}Sent{{pass}}
+                {{set_to_label = dict(zip(db.referral.conclusion.requires.theset, db.referral.conclusion.requires.labels))}}
+                {{=set_to_label[row.referral.conclusion]}}
+                {{else:}}Sent{{pass}}
                 </td>
                 <td>
                     <div class="btn-group" role="group"
                          style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
-                        <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-folder-open'></span>&nbsp<span class='pull-right'>Conclude {{=request.function.capitalize()}}</span>" data-toggle="tooltip"
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                title="<span class='glyphicon glyphicon-folder-open'></span><span class='pull-right'>Conclude {{=request.function.capitalize()}}</span>"
                                 data-archive-object="{{=row.referral.id}}">
-                            <span class="glyphicon glyphicon-folder-open"></span>
+                            <span class="glyphicon glyphicon-folder-open"
+                                  title="Conclude {{=request.function.capitalize()}}" data-toggle="tooltip"
+                                  data-placement="top"
+                            ></span>
                         </button>
-                        <button type="button" class="btn btn-secondary btn-sm" data-edit-object="{{=row.referral.id}}"><span
-                                class="glyphicon glyphicon-edit" title="Edit"
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                data-edit-object="{{=row.referral.id}}"><span
+                                class="glyphicon glyphicon-edit" title="Edit {{=request.function.capitalize()}}"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
-                            <script>
-                                $('[data-edit-object="{{=row.referral.id}}"]').click(function() {
-                                    var urgent;
-                                    {{=XML("urgent="+json(row.referral.urgent)+";")}}
-                                    set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row.referral.ordering_provider}}", "{{=row.referral.appointment_date}}", "{{=row.referral.referral_destination}}", urgent, "{{=row.referral.id}}")
-                                });
-                            </script>
+                        <script>
+                            $('[data-edit-object="{{=row.referral.id}}"]').click(function () {
+                                var urgent;
+                            {{=XML("urgent="+json(row.referral.urgent)+";")}}
+                                set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row.referral.ordering_provider}}", "{{=row.referral.appointment_date}}", "{{=row.referral.referral_destination}}", urgent, "{{=row.referral.id}}")
+                            });
+                        </script>
                         <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-comment" title="Notes"
+                                class="glyphicon glyphicon-comment" title="{{=request.function.capitalize()}} Notes"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
                         <button type="button" class="btn btn-secondary btn-sm"><span
-                                class="glyphicon glyphicon-list-alt" title="Log"
+                                class="glyphicon glyphicon-list-alt" title="{{=request.function.capitalize()}} Log"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
                     </div>
@@ -121,7 +139,7 @@
         </table>
     </div>
     <div class="panel-footer">
-        {{=outgoing_form.custom.begin}}
+    {{=outgoing_form.custom.begin}}
         {{=outgoing_form.custom.submit}}
         {{=outgoing_form.custom.end}}
         {{include '__page_html/paginate.html'}}
@@ -134,7 +152,7 @@
 {{=conclusion_form.custom.submit}}
 {{#=conclusion_form.hidden_fields()}}
 {{=conclusion_form.custom.end}}
-<div class="clearfix"></div>
+    <div class="clearfix"></div>
 </div>
 
 <div id="object_modal" class="modal fade" tabindex="-1" role="dialog">
@@ -143,7 +161,8 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button>
-                <h4 class="modal-title"><span class="glyphicon glyphicon-ban-circle"></span> Error</h4>  {{# if modal pops up without button press, then it is error}}
+                <h4 class="modal-title"><span class="glyphicon glyphicon-ban-circle"></span> Error
+                </h4>  {{# if modal pops up without button press, then it is error}}
             </div>
             <div class="modal-body">
             {{form.element('div#submit_record__row').element('div.col-sm-9')['_class']="col-sm-12"}}    {{# https://groups.google.com/forum/#!topic/web2py/bgDJWVmhS5Y}}
@@ -161,15 +180,15 @@
 
 <script>
     default_args = [$("input[name='first_name']").val(),
-    $("input[name='last_name']").val(),
-    $("input[name='date_of_birth']").val(),
-    $("select[name='ordering_provider']").val(),
-    $("input[name='appointment_date']").val(),
-    $("select[name='referral_destination']").val(),
-    $("input[name='urgent']").prop("checked"),
-    $("input[name='_update']").val()];  {{# val is 0}}
+        $("input[name='last_name']").val(),
+        $("input[name='date_of_birth']").val(),
+        $("select[name='ordering_provider']").val(),
+        $("input[name='appointment_date']").val(),
+        $("select[name='referral_destination']").val(),
+        $("input[name='urgent']").prop("checked"),
+        $("input[name='_update']").val()];  {{# val is 0}}
 
-    $("#add_object_btn").click(function(){
+    $("#add_object_btn").click(function () {
         set_object_form_vals.apply(null, default_args);
     })
 </script>
@@ -181,38 +200,38 @@
 {{include '__page_js/flash_modal.html'}}
 {{include '__page_js/table_check_all.html'}}
 <script>
-    $(function(){  {{# has to be in a ready function as many dependencies use ready function too}}
+    $(function () {  {{# has to be in a ready function as many dependencies use ready function too}}
         $('[data-archive-object]').popover({
-            html : true,
-            placement : 'left',
+            html: true,
+            placement: 'left',
             container: 'body',  {{# container: 'body'. This option is particularly useful in that it allows you to position the popover in the flow of the document near the triggering element - which will prevent the popover from floating away from the triggering element during a window resize.}}
             title: "<span class='glyphicon glyphicon-folder-close'></span> Conclude {{=request.function.capitalize()}}",
-            content: function() {
-              return $("#popover-content").html();
+            content: function () {
+                return $("#popover-content").html();
             },
             trigger: 'manual'  {{# http://stackoverflow.com/questions/16150163/show-one-popover-and-hide-other-popovers}}
         }).on('click', function (e) {
             $(this).popover('toggle');
             $('[data-archive-object]').not(this).popover('hide');
-        }).on('shown.bs.popover', function(e) {
+        }).on('shown.bs.popover', function (e) {
             $("input[name='_conclude']").val($(this).attr('data-archive-object'))
         });
-        $("html").click(function(e){  {{# hide popover when clicking anywhere outside of button or child icon}}
+        $("html").click(function (e) {  {{# hide popover when clicking anywhere outside of button or child icon}}
             var obj = $(e.target);
             //console.log(obj);
             if (!(obj.closest('[data-archive-object]').length ||  {{# use closest instead of parent as closest checks the start element also}}
-                    obj.closest('#conclusion_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
-                    obj.closest('.popover').length
-            )){  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
+                            obj.closest('#conclusion_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
+                            obj.closest('.popover').length
+                    )) {  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
                 $('[data-archive-object]').popover('hide');
             }
         });
     });
 </script>
 <script>
-    $("[data-outgoing-object]").click(function() {
+    $("[data-outgoing-object]").click(function () {
         var outgoing_ids = [];
-        $("[data-outgoing-object]:checked").each(function(){
+        $("[data-outgoing-object]:checked").each(function () {
             outgoing_ids.push($(this).attr("data-outgoing-object"))
         });
         var serialized_outgoing_ids = JSON.stringify(outgoing_ids)
