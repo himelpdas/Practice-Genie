@@ -74,8 +74,9 @@
                 <td>
                 {{if row.referral.urgent:}}
                     <span class="glyphicon glyphicon-exclamation-sign text-danger" title="Urgent" data-toggle="tooltip"
-                          data-placement="top"></span></td>
-            {{pass}}
+                          data-placement="top"></span>
+                {{pass}}
+                </td>
                 <td>{{=row.referral.order_date}}</td>
                 <td>{{=row.patient.last_name}}, {{=row.patient.first_name}}</td>
                 <td>{{=row.patient.date_of_birth}}</td>

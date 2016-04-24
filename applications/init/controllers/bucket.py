@@ -78,11 +78,18 @@ def referral():
     outgoing_form = SQLFORM.factory(_id="outgoing_form", _class="pull-left", hidden={'_outgoing' : json.dumps(None)},  # could've used jquery form but SQLFORM provides _formkey to prevent double submission. FORM does not have .process(), it's more of a HTML helper class
         buttons=[TAG.button(SPAN(_class="glyphicon glyphicon glyphicon-print")+" "+"Send Faxes", _type="submit", _class="btn btn-success btn-sm")]
     )
-    if outgoing_form.process(formname="outgoing_form").accepted:
-        outgoing = json.loads(request.post_vars["_outgoing"] or "null")
-        if outgoing:
-            for each_id in outgoing: #VALIDATE
-                print each_id
+    if not archive and outgoing_form.process(formname="outgoing_form").accepted:
+        outgoing_ids = json.loads(request.post_vars["_outgoing"] or "null")
+        if outgoing_ids:
+            outgoing_rows = db(db.referral.id.belongs(outgoing_ids)).select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, left=[  # left join ensures query_set.count() == len(rows)
+                db.patient.on(db.referral.patient == db.patient.id),
+                db.site.on(db.referral.referral_destination == db.site.id),
+                db.provider.on(db.referral.ordering_provider == db.provider.id)]
+            )
+            body = response.render('__doc_templates/fax.html', dict(rows=outgoing_rows))
+            print mail.send(to=['himel.p.das@gmail.com'],
+                      subject='Practice Genie MD Outstanding Orders ' + str(request.now),
+                      message=body)
 
     return dict(form=form, conclusion_form=conclusion_form, outgoing_form=outgoing_form, rows=rows, paginater=paginater, archive=archive)
 

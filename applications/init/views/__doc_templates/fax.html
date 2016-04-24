@@ -1,0 +1,47 @@
+<html>
+
+{{import random}}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        <h1>Practice Genie MD</h1>
+        <h2>Outstanding Orders For: Weill Cornell Cardiology</h2>
+        <h3>Requested On: {{=request.now}}</h3>
+        <table>
+            <tr>
+                <th><b>Urgent</b></th>
+                <th><b>Order Date</b></th>
+                <th><b>Patient Name</b></th>
+                <th><b>Date Of Birth</b></th>
+                <th><b>Ordering Provider</b></th>
+                <th><b>Ordering Site</b></th>
+                <th><b>Appointment Date</b></th>
+                <th><b>Attempt</b></th>
+            </tr>
+        {{for i, row in enumerate(rows):}}
+            <tr>
+                <td>
+                {{if row.referral.urgent:}}
+                    YES
+                {{else:}}
+                    No
+                {{pass}}
+                </td>
+                <td>{{=row.referral.order_date}}</td>
+                <td>{{=row.patient.last_name}}, {{=row.patient.first_name}}</td>
+                <td>{{=row.patient.date_of_birth}}</td>
+                <td>{{=row.provider.last_name}}, {{=row.provider.first_name}} {{=row.provider.title}}</td>
+                <td>{{=row.site.name}}</td>
+                <td>{{=row.referral.appointment_date}}</td>
+                <td>
+                    {{attempt = random.choice(["1st", "2nd", "FINAL"])}}
+                    {{=attempt}}
+                </td>
+            </tr>
+        {{pass}}
+        </table>
+</body>
+</html>
