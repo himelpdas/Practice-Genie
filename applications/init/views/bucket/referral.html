@@ -120,22 +120,11 @@
         </table>
     </div>
     <div class="panel-footer">
-        {{=outgoing_form}}
-        <script>
-            $("[data-outgoing-object]").click(function() {
-                var outgoing_ids = [];
-                $("[data-outgoing-object]:checked").each(function(){
-                    outgoing_ids.push($(this).attr("data-outgoing-object"))
-                });
-                var serialized_outgoing_ids = JSON.stringify(outgoing_ids)
-                $("#outgoing_form input[name='_outgoing']").val(serialized_outgoing_ids)
-            });
-        </script>
-
+        {{=outgoing_form.custom.begin}}
+        {{=outgoing_form.custom.submit}}
+        {{=outgoing_form.custom.end}}
         {{include '__page_html/paginate.html'}}
-
     </div>
-
 </div>
 
 <div id="popover-content" class="hide">
@@ -217,6 +206,16 @@
                 $('[data-archive-object]').popover('hide');
             }
         });
+    });
+</script>
+<script>
+    $("[data-outgoing-object]").click(function() {
+        var outgoing_ids = [];
+        $("[data-outgoing-object]:checked").each(function(){
+            outgoing_ids.push($(this).attr("data-outgoing-object"))
+        });
+        var serialized_outgoing_ids = JSON.stringify(outgoing_ids)
+        $("#outgoing_form input[name='_outgoing']").val(serialized_outgoing_ids)
     });
 </script>
 {{end}}

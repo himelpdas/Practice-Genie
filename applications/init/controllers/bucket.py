@@ -75,8 +75,8 @@ def referral():
 
     #OUTGOING FAX
     print request.post_vars
-    outgoing_form = SQLFORM.factory(_id="outgoing_form", hidden={'_outgoing' : json.dumps(None)},  # could've used jquery form but SQLFORM provides _formkey to prevent double submission. FORM does not have .process(), it's more of a HTML helper class
-        buttons=[TAG.button(SPAN(_class="glyphicon glyphicon glyphicon-print")+" "+"Send Faxes", _type="submit", _class="btn btn-success btn-sm pull-left")]
+    outgoing_form = SQLFORM.factory(_id="outgoing_form", _class="pull-left", hidden={'_outgoing' : json.dumps(None)},  # could've used jquery form but SQLFORM provides _formkey to prevent double submission. FORM does not have .process(), it's more of a HTML helper class
+        buttons=[TAG.button(SPAN(_class="glyphicon glyphicon glyphicon-print")+" "+"Send Faxes", _type="submit", _class="btn btn-success btn-sm")]
     )
     if outgoing_form.process(formname="outgoing_form").accepted:
         outgoing = json.loads(request.post_vars["_outgoing"] or "null")
