@@ -1,6 +1,5 @@
 {{extend 'layout.html'}}
 {{from gluon.serializers import json}}
-{{import random}}
 
 <script>
     function set_object_form_vals() {
@@ -51,7 +50,7 @@
                 <th><a href="{{=paginater.order_links["referral"]["appointment_date"]["url"]}}"
                        class="table_header_links">Appointment
                     Date</a> {{=paginater.order_links["referral"]["appointment_date"]["arrow"]}}</th>
-                <th><a href="#" class="table_header_links">Outbox</a></th>
+                <th><a href="#" class="table_header_links">{{if not archive:}}Outbox{{else:}}Conclusion{{pass}}</a></th>
                 <th class="col-md-1">
                     <div class="form-group-sm {{if request.vars.patient:}}has-feedback{{pass}}">
                         <input id="patient_search_input" class="form-control input-sm" type="text"
@@ -81,7 +80,7 @@
                 </th>
             </tr>
         {{for i, row in enumerate(rows):}}
-            <tr {{if not "archive" in request.args:}}class="{{=random.choice(['attempting', 'first_attempt', 'second_attempt', 'third_attempt', "","","","",""])}}{{pass}}">
+            <tr {{if not "archive" in request.args:}}{{if not row.outbox.status == "new":}}class="{{if row.outbox.status != "sent":}}attempting{{elif row.outbox.attempts==1:}}first_attempt{{elif row.outbox.attempts==2:}}second_attempt{{else:}}third_attempt{{pass}}"{{pass}}{{pass}}>
                 <td><input data-outgoing-object="{{=row.referral.id}}" type="checkbox" class="table_checkbox"
                            title="{{=request.function.capitalize()}} ID {{=row.referral.id}}"></td>
                 <td>
@@ -99,7 +98,13 @@
                 <td>{{if archive:}}
                 {{set_to_label = dict(zip(db.referral.conclusion.requires.theset, db.referral.conclusion.requires.labels))}}
                 {{=set_to_label[row.referral.conclusion]}}
-                {{else:}}Sent{{pass}}
+                {{else:}}
+                    {{if row.outbox.status == "sent":}}
+                        Sent {{=row.outbox.attempts}} Time{{if row.outbox.attempts>1:}}s{{pass}}
+                    {{else:}}
+                        {{=row.outbox.status.capitalize()}}
+                    {{pass}}
+                {{pass}}
                 </td>
                 <td>
                     <div class="btn-group" role="group"

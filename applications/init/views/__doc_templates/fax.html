@@ -37,8 +37,11 @@
                 <td>{{=row.site.name}}</td>
                 <td>{{=row.referral.appointment_date}}</td>
                 <td>
-                    {{attempt = random.choice(["1st", "2nd", "FINAL"])}}
-                    {{=attempt}}
+                    {{if row.outbox.status == "sent":}}
+                        Sent {{=row.outbox.attempts}} Time{{if row.outbox.attempts>1:}}s{{pass}}
+                    {{else:}}
+                        {{=row.outbox.status}}
+                    {{pass}}
                 </td>
             </tr>
         {{pass}}

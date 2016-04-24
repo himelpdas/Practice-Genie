@@ -27,7 +27,8 @@ def referral():
         form.vars.patient = patient_id  # this is a field in referral
         if patient_id:  # patient id will be None if no changes were detected for update or insert
             if not update_id:  # 0 is false
-                db.referral.insert(**db.referral._filter_fields(form.vars))
+                referral_id = db.referral.insert(**db.referral._filter_fields(form.vars))
+                db.outbox.validate_and_insert(referral=referral_id, status="new")
                 response.flash = 'Referral added.'
             else:
                 # todo - test for permission if user has right to update id
@@ -50,6 +51,47 @@ def referral():
             db(db.referral.id == close_id).update(**conclusion_form.vars)
         response.flash = "Referral Deleted."
 
+
+    # OUTGOING FAX
+    outgoing_form = SQLFORM.factory(_id="outgoing_form", _class="pull-left", hidden={'_outgoing': json.dumps(None)},
+        # could've used jquery form but SQLFORM provides _formkey to prevent double submission. FORM does not have .process(), it's more of a HTML helper class
+        buttons=[
+            TAG.button(SPAN(_class="glyphicon glyphicon glyphicon-print") + " " + "Send Faxes",
+                       _type="submit", _class="btn btn-success btn-sm")]
+        )
+    if not archive and outgoing_form.process(formname="outgoing_form").accepted:
+        outgoing_ids = json.loads(request.post_vars["_outgoing"] or "null")
+        if outgoing_ids:
+            outgoing_referrals = db(db.referral.id.belongs(outgoing_ids)).select(db.referral.ALL, db.patient.ALL,
+                                                                                 db.site.ALL, db.provider.ALL,
+                                                                                 db.outbox.ALL, left=[
+                    # VALIDATE that rows belong to group
+                    db.patient.on(db.referral.patient == db.patient.id),
+                    db.site.on(db.referral.referral_destination == db.site.id),
+                    db.provider.on(db.referral.ordering_provider == db.provider.id),
+                    db.outbox.on(db.referral.id == db.outbox.referral),
+                ])
+
+            for row in outgoing_referrals:
+                row.outbox.update_record(status="sending")
+                row.outbox.status = "sent"
+                row.outbox.attempts += 1  # fake change for email
+
+            body = response.render('__doc_templates/fax.html', dict(rows=outgoing_referrals))
+
+            if mail.send(to=['himel.p.das@gmail.com'],
+                         subject='Practice Genie MD Outstanding Orders ' + str(request.now),
+                         message=body):
+                send_success = True
+            else:
+                send_success = False
+            for row in outgoing_referrals:
+                if not send_success:
+                    row.outbox.attempts -= 1
+                    row.outbox.sent = "failed"
+                row.outbox.update_record(attempts=row.outbox.attempts, status=row.outbox.status)
+
+
     #QUERY
     query = db.referral.id > 0
     if archive:
@@ -66,30 +108,14 @@ def referral():
             query &= db.patient.first_name.like(patient_first, case_sensitive=False)
     query_set = db(query)
     paginater = Paginater(request, query_set, db)
-    rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, left=[  # left join ensures query_set.count() == len(rows)
+    rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.outbox.ALL, left=[  # left join ensures query_set.count() == len(rows)
         db.patient.on(db.referral.patient == db.patient.id),
         db.site.on(db.referral.referral_destination == db.site.id),
         db.provider.on(db.referral.ordering_provider == db.provider.id),
+        db.outbox.on(db.referral.id == db.outbox.referral),
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
 
-    #OUTGOING FAX
-    print request.post_vars
-    outgoing_form = SQLFORM.factory(_id="outgoing_form", _class="pull-left", hidden={'_outgoing' : json.dumps(None)},  # could've used jquery form but SQLFORM provides _formkey to prevent double submission. FORM does not have .process(), it's more of a HTML helper class
-        buttons=[TAG.button(SPAN(_class="glyphicon glyphicon glyphicon-print")+" "+"Send Faxes", _type="submit", _class="btn btn-success btn-sm")]
-    )
-    if not archive and outgoing_form.process(formname="outgoing_form").accepted:
-        outgoing_ids = json.loads(request.post_vars["_outgoing"] or "null")
-        if outgoing_ids:
-            outgoing_rows = db(db.referral.id.belongs(outgoing_ids)).select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, left=[  # left join ensures query_set.count() == len(rows)
-                db.patient.on(db.referral.patient == db.patient.id),
-                db.site.on(db.referral.referral_destination == db.site.id),
-                db.provider.on(db.referral.ordering_provider == db.provider.id)]
-            )
-            body = response.render('__doc_templates/fax.html', dict(rows=outgoing_rows))
-            print mail.send(to=['himel.p.das@gmail.com'],
-                      subject='Practice Genie MD Outstanding Orders ' + str(request.now),
-                      message=body)
 
     return dict(form=form, conclusion_form=conclusion_form, outgoing_form=outgoing_form, rows=rows, paginater=paginater, archive=archive)
 
