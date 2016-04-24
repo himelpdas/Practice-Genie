@@ -53,8 +53,8 @@
                 <th><a href="#" class="table_header_links">{{if not archive:}}Outbox{{else:}}Conclusion{{pass}}</a></th>
                 <th class="col-md-1">
                     <div class="form-group-sm {{if request.vars.patient:}}has-feedback{{pass}}">
-                        <input id="patient_search_input" class="form-control input-sm" type="text"
-                               placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
+                        <input id="patient_search_input" class="form-control input-sm" type="text" data-toggle="tooltip" data-placement="top"
+                               title="Last name <b>,</b> First name" placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
                     {{if request.vars.patient:}}
                         <span id="clearer"
                               class="glyphicon glyphicon-remove-circle form-control-feedback text-danger"></span>
