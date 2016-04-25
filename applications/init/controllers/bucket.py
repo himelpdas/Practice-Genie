@@ -102,7 +102,8 @@ def referral():
     if request.vars.patient:
         patient = map(lambda each: each.strip(), request.vars.patient.split(","))
         patient_last = patient[0]
-        query &= db.patient.last_name.like(patient_last, case_sensitive=False)
+        if patient_last:  # can be "", patient_last, so just search latter
+            query &= db.patient.last_name.like(patient_last, case_sensitive=False)
         if len(patient) > 1:
             patient_first = patient[1]
             query &= db.patient.first_name.like(patient_first, case_sensitive=False)
