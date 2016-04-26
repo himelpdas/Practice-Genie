@@ -54,7 +54,7 @@
                 <th class="col-md-1">
                     <div class="form-group-sm {{if request.vars.patient:}}has-feedback{{pass}}">
                         <input id="patient_search_input" class="form-control input-sm" type="text" data-toggle="tooltip" data-placement="top"
-                               title="Last name <b>,</b> First name" placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
+                               title="{{=T('Last name')}}<b>,</b> {{=T('First name')}}" placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
                     {{if request.vars.patient:}}
                         <span id="clearer"
                               class="glyphicon glyphicon-remove-circle form-control-feedback text-danger"></span>
@@ -239,7 +239,7 @@
         $("[data-outgoing-object]:checked").each(function () {
             outgoing_ids.push($(this).attr("data-outgoing-object"))
         });
-        var serialized_outgoing_ids = JSON.stringify(outgoing_ids)
+        var serialized_outgoing_ids = JSON.stringify(outgoing_ids);
         $("#outgoing_form input[name='_outgoing']").val(serialized_outgoing_ids)
     });
 </script>

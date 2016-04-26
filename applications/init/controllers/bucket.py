@@ -16,7 +16,7 @@ def referral():
 
     archive = "archive" in request.args
 
-    #OBJECT FORM
+    # OBJECT FORM
     form = SQLFORM.factory(db.patient, db.referral, _id="object_form", hidden={"_update": 0}, buttons=[
         TAG.button('Cancel', _type="button", _class="btn btn-default-outline btn-sm pull-right", **{'_data-dismiss' : 'modal'}),
         TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right", _style="margin-right:5px;"),
@@ -39,7 +39,7 @@ def referral():
     elif form.errors:
         response.flash_modal = dict(flash="#object_modal", update_id=update_id)
 
-    #conclusion FORM
+    # conclusion FORM
     db.referral.conclusion.readable = db.referral.conclusion.writable = True  #DO THIS AFTER conclusion FORM
     db.referral.conclusion.default = "received"
     conclusion_form = SQLFORM.factory(db.referral['conclusion'], _id="conclusion_form", hidden={"_conclude": 0},
@@ -49,8 +49,7 @@ def referral():
     if conclusion_form.process(formname="conclusion_form").accepted:
         if close_id:
             db(db.referral.id == close_id).update(**conclusion_form.vars)
-        response.flash = "Referral Deleted."
-
+        response.flash = "Referral marked as %s." % conclusion_form.vars["conclusion"]
 
     # OUTGOING FAX
     outgoing_form = SQLFORM.factory(_id="outgoing_form", _class="pull-left", hidden={'_outgoing': json.dumps(None)},
@@ -62,9 +61,9 @@ def referral():
     if not archive and outgoing_form.process(formname="outgoing_form").accepted:
         outgoing_ids = json.loads(request.post_vars["_outgoing"] or "null")
         if outgoing_ids:
-            outgoing_referrals = db(db.referral.id.belongs(outgoing_ids)).select(db.referral.ALL, db.patient.ALL,
-                                                                                 db.site.ALL, db.provider.ALL,
-                                                                                 db.outbox.ALL, left=[
+            outgoing_referrals = db(db.referral.id.belongs(outgoing_ids)).select(
+                db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.outbox.ALL,
+                left=[
                     # VALIDATE that rows belong to group
                     db.patient.on(db.referral.patient == db.patient.id),
                     db.site.on(db.referral.referral_destination == db.site.id),
@@ -91,14 +90,14 @@ def referral():
                     row.outbox.sent = "failed"
                 row.outbox.update_record(attempts=row.outbox.attempts, status=row.outbox.status)
 
-
-    #QUERY
+    # QUERY
     query = db.referral.id > 0
     if archive:
         query &= db.referral.conclusion != "deleted"
     else:
         query &= db.referral.conclusion == None  # You can't compare NULL values using <> in SQL https://groups.google.com/forum/#!topic/web2py/MgXAPqEGoUI
 
+    # SEARCH
     if request.vars.patient:
         patient = map(lambda each: each.strip(), request.vars.patient.split(","))
         patient_last = patient[0]
@@ -107,7 +106,10 @@ def referral():
         if len(patient) > 1:
             patient_first = patient[1]
             query &= db.patient.first_name.like(patient_first, case_sensitive=False)
+
     query_set = db(query)
+
+    # PAGE
     paginater = Paginater(request, query_set, db)
     rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.outbox.ALL, left=[  # left join ensures query_set.count() == len(rows)
         db.patient.on(db.referral.patient == db.patient.id),
