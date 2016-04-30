@@ -1,5 +1,6 @@
 {{extend 'layout.html'}}
 {{from gluon.serializers import json}}
+{{import humanize}}
 
 <script>
     function set_object_form_vals() {
@@ -129,7 +130,9 @@
                                 set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row.referral.ordering_provider}}", "{{=row.referral.appointment_date}}", "{{=row.referral.referral_destination}}", urgent, "{{=row.referral.id}}")
                             });
                         </script>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
+                        <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-comment'></span><span class='pull-right'>{{=request.function.capitalize()}} Notes</span>"
+                        data-object-note="{{=row.referral.id}}">
+                            <span
                                 class="glyphicon glyphicon-comment" title="{{=request.function.capitalize()}} Notes"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
@@ -155,9 +158,56 @@
 {{=conclusion_form.custom.begin}}
 {{=conclusion_form.custom.widget.conclusion}}
 {{=conclusion_form.custom.submit}}
-{{#=conclusion_form.hidden_fields()}}
+{{#=conclusion_form.hidden_fields()  # already included in form.custom.end}}
 {{=conclusion_form.custom.end}}
     <div class="clearfix"></div>
+</div>
+
+<div id="note-popover-content" class="hide">
+    <div class="row">
+{{for row in rows:}}
+    {{if len(row.request_notes):}}
+        <table id='request_note_data_{{=row.referral.id}}' class="hide">
+            <tr>
+                <th class="col-xs-4">
+                    Timestamp
+                </th>
+                <th class="col-xs-8">
+                    Comment
+                </th>
+            </tr>
+        {{for note in row.request_notes:}}
+            <tr>
+                <td>
+                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=note.request_note.created_on}}">{{=humanize.naturaltime(note.request_note.created_on)}}</p>
+                    <script>
+
+                    </script>
+                    <p class="text-muted">{{=note.auth_user.first_name.capitalize()}} {{=note.auth_user.last_name.capitalize()}}</p>
+                </td>
+                <td>
+                    {{=note.request_note.note}}
+                </td>
+            </tr>
+        {{pass}}
+        </table>
+    {{pass}}
+{{pass}}
+        <table id='request_note_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em; display: block;">
+        </table>
+    </div>
+        {{=note_form.custom.begin}}
+    <div class="row">
+    <div class="form-group-sm">
+        <div class="col-xs-10">
+        {{=note_form.custom.widget.note}}
+        </div>
+        <div class="col-xs-2">
+        {{=note_form.custom.submit}}
+        </div>
+    </div>
+        {{=note_form.custom.end}}
+    </div>
 </div>
 
 <div id="object_modal" class="modal fade" tabindex="-1" role="dialog">
@@ -174,7 +224,7 @@
             {{for i in form.elements('div.form-group'):}}   {{# just .form-group works, but better to be explicit  # http://www.w3schools.com/bootstrap/bootstrap_forms_sizing.asp}}
                 {{i['_class'] += " form-group-sm"}}
             {{pass}}
-            {{for i in form.elements('input.string'):}}
+            {{for i in form.elements('input.string'):}}  {{# for autofill?}}
                 {{i['_class'] += " form-control"}}
             {{pass}}
                 {{=form}}
@@ -206,29 +256,63 @@
 {{include '__page_js/table_check_all.html'}}
 <script>
     $(function () {  {{# has to be in a ready function as many dependencies use ready function too}}
+        $('[data-object-note]').popover({
+            html: true,
+            placement: 'left',
+            container: 'body',  {{# container: 'body'. This option is particularly useful in that it allows you to position the popover in the flow of the document near the triggering element - which will prevent the popover from floating away from the triggering element during a window resize.}}
+            content: function () {
+                return $("#note-popover-content").html();
+            },
+            trigger: 'manual'  {{# http://stackoverflow.com/questions/16150163/show-one-popover-and-hide-other-popovers}}
+        }).on('click', function (e) {
+            var note_data = $("#request_note_data_"+$(this).attr('data-object-note'));
+            if (note_data.length) {
+                $("#request_note_display").html(note_data.html()).removeClass("hide");
+            } else {
+                $("#request_note_display").html("").addClass("hide");
+            }
+            $('body').addClass('modal-open');  {{# stop the body from scrolling when scrolling in a popover}}
+            $(this).popover('show');  {{# keep after addClass('modal-open') because scroll bar vanishes and button moves away from popover}}
+            $('[data-object-note]').not(this).popover('hide');
+            $('[data-archive-object]').popover('hide');
+        }).on('shown.bs.popover', function (e) {
+            $("input[name='_request']").val($(this).attr('data-object-note'));
+        });
+    });
+</script>
+<script>
+    $(function () {  {{# has to be in a ready function as many dependencies use ready function too}}
         $('[data-archive-object]').popover({
             html: true,
             placement: 'left',
             container: 'body',  {{# container: 'body'. This option is particularly useful in that it allows you to position the popover in the flow of the document near the triggering element - which will prevent the popover from floating away from the triggering element during a window resize.}}
-            title: "<span class='glyphicon glyphicon-folder-close'></span> Conclude {{=request.function.capitalize()}}",
             content: function () {
                 return $("#popover-content").html();
             },
             trigger: 'manual'  {{# http://stackoverflow.com/questions/16150163/show-one-popover-and-hide-other-popovers}}
         }).on('click', function (e) {
-            $(this).popover('toggle');
+            $('body').addClass('modal-open');
+            $(this).popover('show');
             $('[data-archive-object]').not(this).popover('hide');
+            $('[data-object-note]').popover('hide');
         }).on('shown.bs.popover', function (e) {
-            $("input[name='_conclude']").val($(this).attr('data-archive-object'))
-        });
+            $("input[name='_conclude']").val($(this).attr('data-archive-object'));
+        })
+    });
+</script>
+<script>
+    $(function(){
         $("html").click(function (e) {  {{# hide popover when clicking anywhere outside of button or child icon}}
             var obj = $(e.target);
             //console.log(obj);
             if (!(obj.closest('[data-archive-object]').length ||  {{# use closest instead of parent as closest checks the start element also}}
-                            obj.closest('#conclusion_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
-                            obj.closest('.popover').length
-                    )) {  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
+                  obj.closest('[data-object-note]').length ||
+                  obj.closest('#conclusion_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
+                  obj.closest('.popover').length
+                )) {  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
                 $('[data-archive-object]').popover('hide');
+                $('[data-object-note]').popover('hide');
+                $('body').removeClass('modal-open');
             }
         });
     });

@@ -1,7 +1,7 @@
 db.define_table("patient",
-    Field('first_name'),
-    Field('last_name'),
-    Field('date_of_birth', 'date'),
+    Field('first_name', requires=IS_NOT_EMPTY()),
+    Field('last_name', requires=IS_NOT_EMPTY()),
+    Field('date_of_birth', 'date', requires=IS_NOT_EMPTY()),
     auth.signature,
 )
 
@@ -52,3 +52,9 @@ db.define_table('outbox',
 )
 
 #IMPORTANT - always set not required fields to default = "", or else != operator in queries will return wrong values #https://groups.google.com/forum/#!topic/web2py/MgXAPqEGoUI
+
+db.define_table('request_note',
+    Field('request','reference referral', readable=False, writable=False),
+    Field('note'),
+    auth.signature,
+)

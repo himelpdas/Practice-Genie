@@ -118,9 +118,19 @@ def referral():
         db.outbox.on(db.referral.id == db.outbox.referral),
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
+    # NOTES
+    note_form = SQLFORM.factory(db.request_note, formname="note_form", _class="form-horizontal", hidden={'_request': 0}, buttons=[TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right")],)
+    if note_form.process().accepted:
+        request_id = int(request.post_vars['_request'] or -1)
+        if request_id:
+            db.request_note.insert(request=request_id, **db.request_note._filter_fields(note_form.vars))
+            response.flash = "Note entered."
+        else:
+            response.flash = "Hidden ID field missing."
+    for row in rows:
+        row.request_notes = db(db.request_note.request == row.referral.id).select(db.auth_user.ALL, db.request_note.ALL, join=[db.auth_user.on(db.auth_user.id == db.request_note.created_by)])  # left inner protects against None auth_user
 
-
-    return dict(form=form, conclusion_form=conclusion_form, outgoing_form=outgoing_form, rows=rows, paginater=paginater, archive=archive)
+    return dict(form=form, conclusion_form=conclusion_form, outgoing_form=outgoing_form, rows=rows, paginater=paginater, archive=archive, note_form=note_form)
 
 '''
 @auth.requires_login()  # https://groups.google.com/forum/#!topic/web2py/zzLVxaQZn7U
