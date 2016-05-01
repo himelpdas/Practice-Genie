@@ -1,7 +1,25 @@
+class IS_TEL_OR_EMAIL:
+    def __init__(self, error_message='Must be an email OR a US cellular number!'):
+        self.e = error_message
+    def __call__(self, value):
+        val = IS_EMAIL()
+        check = val(value)
+        bad = check[1]
+        if not bad:
+            return check
+
+        val = IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$')
+        check = val(value)
+        bad = check[1]
+        if not bad:
+            return check
+        return value, self.e
+
 db.define_table("patient",
     Field('first_name', requires=IS_NOT_EMPTY()),
     Field('last_name', requires=IS_NOT_EMPTY()),
-    Field('date_of_birth', 'date', requires=IS_NOT_EMPTY()),
+    Field('date_of_birth', 'date', requires=IS_DATE()),
+    Field('cell_or_email', requires=IS_TEL_OR_EMAIL()),
     auth.signature,
 )
 
