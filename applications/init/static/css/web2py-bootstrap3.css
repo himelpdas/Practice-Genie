@@ -404,7 +404,7 @@ a.table_header_links {
 }
 
 /* notes popover table */
- #request_note_display>thead>tr>th, #request_note_display>tbody>tr>th, #request_note_display>tfoot>tr>th, #request_note_display>thead>tr>td, #request_note_display>tbody>tr>td, #request_note_display>tfoot>tr>td {
+ #referral_note_display>thead>tr>th, #referral_note_display>tbody>tr>th, #referral_note_display>tfoot>tr>th, #referral_note_display>thead>tr>td, #referral_note_display>tbody>tr>td, #referral_note_display>tfoot>tr>td {
     border-top: none;
     border-bottom: 1px solid #dfd7ca;
 }

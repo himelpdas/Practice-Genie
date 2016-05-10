@@ -6,7 +6,7 @@ function modalMax() {
     // ensures modal is stretched to maximum viewport height, with proper margins
     modal_body = $(".modal-body");
     if (modal_body.length > 0) {  // modal_body.length sees if element exists http://goo.gl/aydXl
-        modal_body.css({"max-height": $(window).height() - $(".modal-body")[0].getBoundingClientRect().top - $(".modal-dialog")[0] .getBoundingClientRect().top - 10});
+        modal_body.css({"max-height": $(window).height() - $(".modal-body")[0].getBoundingClientRect().top - $(".modal-dialog")[0] .getBoundingClientRect().top});
     }
 }
 

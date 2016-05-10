@@ -1,3 +1,5 @@
+#TODO - use Twilio lookup tool to validate numbers https://www.twilio.com/docs/quickstart/php/lookups
+
 class IS_TEL_OR_EMAIL:
     def __init__(self, error_message='Must be an email OR a US cellular number!'):
         self.e = error_message
@@ -48,31 +50,5 @@ db.define_table("provider",
     Field('email', requires=IS_EMAIL()),
     Field('phone', requires=IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$')),
     Field('ext', requires=IS_EMPTY_OR(IS_INT_IN_RANGE(0, 10000))),
-    auth.signature,
-)
-
-db.define_table('referral',
-    Field('patient', 'reference patient', requires=IS_IN_DB(db, db.patient, '%(last_name)s, %(first_name)s'), readable=False, writable=False),
-    Field('order_date', 'date', default=request.now, readable=False, writable=False),  # change to dt # customize https://www.youtube.com/watch?v=nk5YEP5r-UQ
-    Field('ordering_provider', 'reference provider', requires=IS_IN_DB(db, db.provider, '%(last_name)s, %(first_name)s %(title)s')),
-    Field('appointment_date', 'date', default=request.now),
-    Field('referral_destination', "reference site", requires=IS_IN_DB(db, db.site, '%(name)s')),  # 1st arg can be db or query set: db.person.name.requires = IS_IN_DB(db(db.person.id>10), 'person.id', '%(name)s')
-    Field('urgent', 'boolean'),
-    Field('conclusion', readable=False, writable=False, requires=IS_IN_SET([('deleted', 'Delete Referral'), ('received', "Referral Received"), ('missed', "Appointment Missed"), ('other', "Other Reason (In Notes)")], zero=None), widget=SQLFORM.widgets.radio.widget),
-    auth.signature,
-)
-
-db.define_table('outbox',
-    Field('referral', 'reference referral'),
-    Field('status', requires=IS_IN_SET(["new", "sending", "failed", "sent"])),
-    Field('attempts', 'integer', default=0),
-    auth.signature,
-)
-
-#IMPORTANT - always set not required fields to default = "", or else != operator in queries will return wrong values #https://groups.google.com/forum/#!topic/web2py/MgXAPqEGoUI
-
-db.define_table('request_note',
-    Field('request','reference referral', readable=False, writable=False),
-    Field('note'),
     auth.signature,
 )

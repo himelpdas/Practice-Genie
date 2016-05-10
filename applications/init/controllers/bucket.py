@@ -28,7 +28,7 @@ def referral():
         if patient_id:  # patient id will be None if no changes were detected for update or insert
             if not update_id:  # 0 is false
                 referral_id = db.referral.insert(**db.referral._filter_fields(form.vars))
-                db.outbox.validate_and_insert(referral=referral_id, status="new")
+                db.referral_outbox.validate_and_insert(referral=referral_id, status="new")
                 response.flash = 'Referral added.'
             else:
                 # todo - test for permission if user has right to update id
@@ -62,19 +62,19 @@ def referral():
         outgoing_ids = json.loads(request.post_vars["_outgoing"] or "null")
         if outgoing_ids:
             outgoing_referrals = db(db.referral.id.belongs(outgoing_ids)).select(
-                db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.outbox.ALL,
+                db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.referral_outbox.ALL,
                 left=[
                     # VALIDATE that rows belong to group
                     db.patient.on(db.referral.patient == db.patient.id),
                     db.site.on(db.referral.referral_destination == db.site.id),
                     db.provider.on(db.referral.ordering_provider == db.provider.id),
-                    db.outbox.on(db.referral.id == db.outbox.referral),
+                    db.referral_outbox.on(db.referral.id == db.referral_outbox.referral),
                 ])
 
             for row in outgoing_referrals:
-                row.outbox.update_record(status="sending")
-                row.outbox.status = "sent"
-                row.outbox.attempts += 1  # fake change for email
+                row.referral_outbox.update_record(status="sending")
+                row.referral_outbox.status = "sent"
+                row.referral_outbox.attempts += 1  # fake change for email
 
             body = response.render('__doc_templates/fax.html', dict(rows=outgoing_referrals))
 
@@ -86,9 +86,9 @@ def referral():
                 send_success = False
             for row in outgoing_referrals:
                 if not send_success:
-                    row.outbox.attempts -= 1
-                    row.outbox.sent = "failed"
-                row.outbox.update_record(attempts=row.outbox.attempts, status=row.outbox.status)
+                    row.referral_outbox.attempts -= 1
+                    row.referral_outbox.sent = "failed"
+                row.referral_outbox.update_record(attempts=row.referral_outbox.attempts, status=row.referral_outbox.status)
 
     # QUERY
     query = db.referral.id > 0
@@ -111,24 +111,24 @@ def referral():
 
     # PAGE
     paginater = Paginater(request, query_set, db)
-    rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.outbox.ALL, left=[  # left join ensures query_set.count() == len(rows)
+    rows = query_set.select(db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.referral_outbox.ALL, left=[  # left join ensures query_set.count() == len(rows)
         db.patient.on(db.referral.patient == db.patient.id),
         db.site.on(db.referral.referral_destination == db.site.id),
         db.provider.on(db.referral.ordering_provider == db.provider.id),
-        db.outbox.on(db.referral.id == db.outbox.referral),
+        db.referral_outbox.on(db.referral.id == db.referral_outbox.referral),
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
     # NOTES
-    note_form = SQLFORM.factory(db.request_note, formname="note_form", _class="form-horizontal", hidden={'_request': 0}, buttons=[TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right")],)
+    note_form = SQLFORM.factory(db.referral_note, formname="note_form", _class="form-horizontal", hidden={'_request': 0}, buttons=[TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right")],)
     if note_form.process().accepted:
         request_id = int(request.post_vars['_request'] or -1)
         if request_id:
-            db.request_note.insert(request=request_id, **db.request_note._filter_fields(note_form.vars))
+            db.referral_note.insert(request=request_id, **db.referral_note._filter_fields(note_form.vars))
             response.flash = "Note entered."
         else:
             response.flash = "Hidden ID field missing."
     for row in rows:
-        row.request_notes = db(db.request_note.request == row.referral.id).select(db.auth_user.ALL, db.request_note.ALL, join=[db.auth_user.on(db.auth_user.id == db.request_note.created_by)])  # left inner protects against None auth_user
+        row.referral_notes = db(db.referral_note.request == row.referral.id).select(db.auth_user.ALL, db.referral_note.ALL, join=[db.auth_user.on(db.auth_user.id == db.referral_note.created_by)])  # left inner protects against None auth_user
 
     return dict(form=form, conclusion_form=conclusion_form, outgoing_form=outgoing_form, rows=rows, paginater=paginater, archive=archive, note_form=note_form)
 

@@ -81,7 +81,7 @@
                 </th>
             </tr>
         {{for i, row in enumerate(rows):}}
-            <tr {{if not "archive" in request.args:}}{{if not row.outbox.status == "new":}}class="{{if row.outbox.status != "sent":}}attempting{{elif row.outbox.attempts==1:}}first_attempt{{elif row.outbox.attempts==2:}}second_attempt{{else:}}third_attempt{{pass}}"{{pass}}{{pass}}>
+            <tr {{if not "archive" in request.args:}}{{if not row.referral_outbox.status == "new":}}class="{{if row.referral_outbox.status != "sent":}}attempting{{elif row.referral_outbox.attempts==1:}}first_attempt{{elif row.referral_outbox.attempts==2:}}second_attempt{{else:}}third_attempt{{pass}}"{{pass}}{{pass}}>
                 <td><input data-outgoing-object="{{=row.referral.id}}" type="checkbox" class="table_checkbox"
                            title="{{=request.function.capitalize()}} ID {{=row.referral.id}}"></td>
                 <td>
@@ -100,10 +100,10 @@
                 {{set_to_label = dict(zip(db.referral.conclusion.requires.theset, db.referral.conclusion.requires.labels))}}
                 {{=set_to_label[row.referral.conclusion]}}
                 {{else:}}
-                    {{if row.outbox.status == "sent":}}
-                        Sent {{=row.outbox.attempts}} Time{{if row.outbox.attempts>1:}}s{{pass}}
+                    {{if row.referral_outbox.status == "sent":}}  {{# IF BLANK DB, CREATE REFERENCES FOR EACH ROW IN SHELL}}
+                        Sent {{=row.referral_outbox.attempts}} Time{{if row.referral_outbox.attempts>1:}}s{{pass}}
                     {{else:}}
-                        {{=row.outbox.status.capitalize()}}
+                        {{=row.referral_outbox.status.capitalize()}}
                     {{pass}}
                 {{pass}}
                 </td>
@@ -166,8 +166,8 @@
 <div id="note-popover-content" class="hide">
     <div class="row">
 {{for row in rows:}}
-    {{if len(row.request_notes):}}
-        <table id='request_note_data_{{=row.referral.id}}' class="hide">
+    {{if len(row.referral_notes):}}
+        <table id='referral_note_data_{{=row.referral.id}}' class="hide">
             <tr>
                 <th class="col-xs-4">
                     Timestamp
@@ -176,24 +176,24 @@
                     Comment
                 </th>
             </tr>
-        {{for note in row.request_notes:}}
+        {{for note in row.referral_notes:}}
             <tr>
                 <td>
-                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=note.request_note.created_on}}">{{=humanize.naturaltime(note.request_note.created_on)}}</p>
+                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=note.referral_note.created_on}}">{{=humanize.naturaltime(note.referral_note.created_on)}}</p>
                     <script>
 
                     </script>
                     <p class="text-muted">{{=note.auth_user.first_name.capitalize()}} {{=note.auth_user.last_name.capitalize()}}</p>
                 </td>
                 <td>
-                    {{=note.request_note.note}}
+                    {{=note.referral_note.note}}
                 </td>
             </tr>
         {{pass}}
         </table>
     {{pass}}
 {{pass}}
-        <table id='request_note_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em; display: block;">
+        <table id='referral_note_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em;">
         </table>
     </div>
         {{=note_form.custom.begin}}
@@ -265,11 +265,11 @@
             },
             trigger: 'manual'  {{# http://stackoverflow.com/questions/16150163/show-one-popover-and-hide-other-popovers}}
         }).on('click', function (e) {
-            var note_data = $("#request_note_data_"+$(this).attr('data-object-note'));
+            var note_data = $("#referral_note_data_"+$(this).attr('data-object-note'));
             if (note_data.length) {
-                $("#request_note_display").html(note_data.html()).removeClass("hide");
+                $("#referral_note_display").html(note_data.html()).removeClass("hide");
             } else {
-                $("#request_note_display").html("").addClass("hide");
+                $("#referral_note_display").html("").addClass("hide");
             }
             $('body').addClass('modal-open');  {{# stop the body from scrolling when scrolling in a popover}}
             $(this).popover('show');  {{# keep after addClass('modal-open') because scroll bar vanishes and button moves away from popover}}

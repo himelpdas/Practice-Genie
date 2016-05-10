@@ -37,10 +37,10 @@
                 <td>{{=row.site.name}}</td>
                 <td>{{=row.referral.appointment_date}}</td>
                 <td>
-                    {{if row.outbox.status == "sent":}}
-                        Sent {{=row.outbox.attempts}} Time{{if row.outbox.attempts>1:}}s{{pass}}
+                    {{if row.referral_outbox.status == "sent":}}
+                        Sent {{=row.referral_outbox.attempts}} Time{{if row.referral_outbox.attempts>1:}}s{{pass}}
                     {{else:}}
-                        {{=row.outbox.status}}
+                        {{=row.referral_outbox.status}}
                     {{pass}}
                 </td>
             </tr>
