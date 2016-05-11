@@ -1,6 +1,6 @@
 <script>
     function set_object_modal_title(symbol, action) {
-        $("#object_modal .modal-title").html('<span class="glyphicon glyphicon-' + symbol + '"></span> '+ action + " {{=request.function.capitalize()}}");
+        $("#object_modal .modal-title").html('<span class="glyphicon glyphicon-' + symbol + '"></span> '+ action + " {{=bucket.capitalize()}}");
     }
 
     $(function(){

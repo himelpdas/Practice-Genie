@@ -40,7 +40,7 @@ class Paginater():
         self.set_paging()
 
     def set_ordering(self):
-        order_string = self._request.vars["orderby"] or (self._request.function + ".id")
+        order_string = self._request.vars["orderby"] or (self._request.args[0] + ".id")
         self.order_reverse = "~" in order_string
         order_string = order_string.strip("~")
         self.order_table, self.order_field = order_string.split(".")
@@ -58,7 +58,7 @@ class Paginater():
             for table_field in self._db[table_name].fields:
                 table_field_is_order_field = (table_name == self.order_table) & (self.order_field == table_field)
                 self.order_links.setdefault(table_name, {}).setdefault(table_field, {}).update({  # http://stackoverflow.com/questions/12905999/python-dict-how-to-create-key-or-append-an-element-to-key
-                    "url": URL(vars=dict(self._old_vars + {'orderby': ("" if (not table_field_is_order_field or self.order_reverse) else "~") + "%s.%s"%(table_name, table_field)}.items())),  # flipping order
+                    "url": URL(args=self._request.args, vars=dict(self._old_vars + {'orderby': ("" if (not table_field_is_order_field or self.order_reverse) else "~") + "%s.%s"%(table_name, table_field)}.items())),  # flipping order
                     "arrow": SPAN(_class="text-info glyphicon glyphicon-arrow-" + ("down" if self.order_reverse else "up")) if table_field_is_order_field else ""
                 })
 
@@ -67,7 +67,7 @@ class Paginater():
         self.items_per_page = int(self._request.vars["per"] if int(self._request.vars["per"] or -1) in Paginater.item_limits else Paginater.item_limits[1])
         self.limitby=(self.page*self.items_per_page,(self.page+1)*self.items_per_page)  # 1*5 <-> 2*5+1
         for each in self.item_limits:
-            href = URL(vars=dict(self._old_vars + {'per': each, 'page': 0}.items()))
+            href = URL(args=self._request.args, vars=dict(self._old_vars + {'per': each, 'page': 0}.items()))
             self.items_per_page_urls.append(dict(href=href, number=each, current=each == self.items_per_page))
 
         self.item_count = self._query_set.count()
@@ -77,12 +77,12 @@ class Paginater():
             self.pages -= 1  # don't need a new page for a full page ie. 12/12 items
 
         for each in xrange(self.pages + 1):  # xrange doesn't include last
-            href = URL(vars=dict(self._old_vars + {'page':each}.items()))
+            href = URL(args=self._request.args, vars=dict(self._old_vars + {'page':each}.items()))
             self.page_urls.append(dict(href=href, number=each, current=each == self.page))
 
         self.has_next = self.page < self.pages  # need a new page for overfull page ie. 13/12 items, need page for 1/12
         self.has_prev = bool(self.page)
         self.next_page = None if not self.has_next else self.page+1  # href='{{=URL(vars=dict(page=paginater.next_page))}}'
-        self.next_url = URL(vars=dict(self._old_vars + {'page':self.next_page}.items()))
+        self.next_url = URL(args=self._request.args, vars=dict(self._old_vars + {'page':self.next_page}.items()))
         self.prev_page = None if not self.has_prev else self.page-1
-        self.prev_url = URL(vars=dict(self._old_vars + {'page':self.prev_page}.items()))
+        self.prev_url = URL(args=self._request.args, vars=dict(self._old_vars + {'page':self.prev_page}.items()))
