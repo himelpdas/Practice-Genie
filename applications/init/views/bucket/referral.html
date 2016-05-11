@@ -318,13 +318,13 @@
     });
 </script>
 <script>
-    $("[data-outgoing-object]").click(function () {
+    $(function(){$("[data-outgoing-object], table .glyphicon-check").click(function () {
         var outgoing_ids = [];
         $("[data-outgoing-object]:checked").each(function () {
             outgoing_ids.push($(this).attr("data-outgoing-object"))
         });
         var serialized_outgoing_ids = JSON.stringify(outgoing_ids);
-        $("#outgoing_form input[name='_outgoing']").val(serialized_outgoing_ids)
-    });
+        $("#outgoing_form input[name='_outgoing']").val(serialized_outgoing_ids);
+    })});
 </script>
 {{end}}

@@ -60,6 +60,7 @@ def referral():
         )
     if not archive and outgoing_form.process(formname="outgoing_form").accepted:
         outgoing_ids = json.loads(request.post_vars["_outgoing"] or "null")
+        print outgoing_ids
         if outgoing_ids:
             outgoing_referrals = db(db.referral.id.belongs(outgoing_ids)).select(
                 db.referral.ALL, db.patient.ALL, db.site.ALL, db.provider.ALL, db.referral_outbox.ALL,
