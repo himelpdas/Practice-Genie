@@ -136,7 +136,9 @@
                                 class="glyphicon glyphicon-comment" title="{{=bucket.capitalize()}} Notes"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
-                        <button type="button" class="btn btn-secondary btn-sm"><span
+                        <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-list-alt'></span><span class='pull-right'>{{=bucket.capitalize()}} Logs</span>"
+                        data-object-log="{{=row.referral.id}}">
+                            <span
                                 class="glyphicon glyphicon-list-alt" title="{{=bucket.capitalize()}} Log"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
@@ -180,9 +182,6 @@
             <tr>
                 <td>
                     <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=note.referral_note.created_on}}">{{=humanize.naturaltime(note.referral_note.created_on)}}</p>
-                    <script>
-
-                    </script>
                     <p class="text-muted">{{=note.auth_user.first_name.capitalize()}} {{=note.auth_user.last_name.capitalize()}}</p>
                 </td>
                 <td>
@@ -208,6 +207,38 @@
     </div>
         {{=note_form.custom.end}}
     </div>
+</div>
+        
+<div id="log_popover_content" class="hide">
+    <div class="row">
+{{for row in rows:}}
+    {{if len(row.referral_logs):}}
+        <table id='referral_log_data_{{=row.referral.id}}' class="hide">
+            <tr>
+                <th class="col-xs-4">
+                    Timestamp
+                </th>
+                <th class="col-xs-8">
+                    Comment
+                </th>
+            </tr>
+        {{for log in row.referral_logs:}}
+            <tr>
+                <td>
+                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=log.referral_note.created_on}}">{{=humanize.naturaltime(log.referral_note.created_on)}}</p>
+                    <p class="text-muted">{{=log.auth_user.first_name.capitalize()}} {{=log.auth_user.last_name.capitalize()}}</p>
+                </td>
+                <td>
+                    {{=log.referral_note.note}}
+                </td>
+            </tr>
+        {{pass}}
+        </table>
+    {{pass}}
+{{pass}}
+        <table id='referral_log_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em;">
+        </table>
+</div>        
 </div>
 
 <div id="object_modal" class="modal fade" tabindex="-1" role="dialog">
@@ -296,7 +327,7 @@
 </script>
 <script>
     $(function(){
-        button_mini_modal('data-object-note', 'note_popover_content', ['data-object-archive'], '_add_note_to', function(){
+        button_mini_modal('data-object-note', 'note_popover_content', ['data-object-archive','data-object-log'], '_add_note_to', function(){
             var note_data = $("#referral_note_data_"+$(this).attr('data-object-note'));
             if (note_data.length) {
                 $("#referral_note_display").html(note_data.html()).removeClass("hide");
@@ -306,11 +337,21 @@
         });
     });
     $(function(){
-        button_mini_modal('data-object-archive', 'archive_popover_content', ['data-object-note'], '_conclude', function(){});
+        button_mini_modal('data-object-log', 'log_popover_content', ['data-object-archive', 'data-object-note'], '_add_log_to', function(){
+            var log_data = $("#referral_log_data_"+$(this).attr('data-object-log'));
+            if (log_data.length) {
+                $("#referral_log_display").html(log_data.html()).removeClass("hide");
+            } else {
+                $("#referral_log_display").html("").addClass("hide");
+            }
+        });
+    });
+    $(function(){
+        button_mini_modal('data-object-archive', 'archive_popover_content', ['data-object-note', 'data-object-log'], '_conclude', function(){});
     });
     $(function(){close_button_mini_modal(
-            ['[data-object-archive]', '[data-object-note]', '#conclusion_form', '.popover'],  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
-            ['data-object-archive', 'data-object-note']
+            ['[data-object-archive]', '[data-object-note]', '[data-object-log]', '#conclusion_form', '.popover'],  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
+            ['data-object-archive', 'data-object-note', 'data-object-log']
     )});
 </script>
 <script>

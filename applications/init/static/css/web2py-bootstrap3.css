@@ -408,3 +408,9 @@ a.table_header_links {
     border-top: none;
     border-bottom: 1px solid #dfd7ca;
 }
+ 
+/* notes popover table */
+ #referral_log_display>thead>tr>th, #referral_log_display>tbody>tr>th, #referral_log_display>tfoot>tr>th, #referral_log_display>thead>tr>td, #referral_log_display>tbody>tr>td, #referral_log_display>tfoot>tr>td {
+    border-top: none;
+    border-bottom: 1px solid #dfd7ca;
+} 

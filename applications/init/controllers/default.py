@@ -95,10 +95,12 @@ def bucket():
                 referral_id = db.referral.insert(**db.referral._filter_fields(form.vars))
                 db.referral_outbox.validate_and_insert(referral=referral_id, status="new")
                 response.flash = 'Referral added.'
+                db.referral_note.insert(request=referral_id, note="Referral added.", is_log=True)
             else:
                 # todo - test for permission if user has right to update id
                 db(db.referral.id == update_id).update(**db.referral._filter_fields(form.vars))
                 response.flash = 'Referral updated.'
+            db.referral_note.insert(request=update_id, note="Referral updated.", is_log=True)
         else:
             response.flash = 'No changes were made.'
     elif form.errors:
@@ -194,7 +196,9 @@ def bucket():
         else:
             response.flash = "Hidden ID field missing."
     for row in rows:
-        row.referral_notes = db(db.referral_note.request == row.referral.id).select(db.auth_user.ALL, db.referral_note.ALL, join=[db.auth_user.on(db.auth_user.id == db.referral_note.created_by)])  # left inner protects against None auth_user
+        row_notes = db(db.referral_note.request == row.referral.id).select(db.auth_user.ALL, db.referral_note.ALL, join=[db.auth_user.on(db.auth_user.id == db.referral_note.created_by)])  # left inner protects against None auth_user
+        row[bucket + "_notes"] = row_notes.find(lambda each: not each.referral_note.is_log)
+        row[bucket + "_logs"] = row_notes.find(lambda each: each.referral_note.is_log)
 
     return dict(form=form, conclusion_form=conclusion_form, outgoing_form=outgoing_form, rows=rows, paginater=paginater, archive=archive, note_form=note_form, bucket=bucket)
 
