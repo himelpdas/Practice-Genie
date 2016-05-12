@@ -185,12 +185,12 @@ def bucket():
     ], limitby=paginater.limitby, orderby=paginater.orderby)  # explicitly select all http://stackoverflow.com/questions/7782717/web2py-dal-multiple-left-joins
 
     # NOTES
-    note_form = SQLFORM.factory(db.referral_note, formname="note_form", _class="form-horizontal", hidden={'_request': 0}, buttons=[TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right")],)
+    note_form = SQLFORM.factory(db.referral_note, formname="note_form", _class="form-horizontal", hidden={'_add_note_to': 0}, buttons=[TAG.button('Submit', _type="submit", _class="btn btn-primary btn-sm pull-right")],)
     if note_form.process().accepted:
-        request_id = int(request.post_vars['_request'] or -1)
+        request_id = int(request.post_vars['_add_note_to'] or -1)
         if request_id:
             db.referral_note.insert(request=request_id, **db.referral_note._filter_fields(note_form.vars))
-            response.flash = "Note entered."
+            response.flash = "Note was entered to the %s." % bucket
         else:
             response.flash = "Hidden ID field missing."
     for row in rows:

@@ -112,7 +112,7 @@
                          style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
                         <button type="button" class="btn btn-secondary btn-sm"
                                 title="<span class='glyphicon glyphicon-folder-open'></span><span class='pull-right'>Conclude {{=bucket.capitalize()}}</span>"
-                                data-archive-object="{{=row.referral.id}}">
+                                data-object-archive="{{=row.referral.id}}">
                             <span class="glyphicon glyphicon-folder-open"
                                   title="Conclude {{=bucket.capitalize()}}" data-toggle="tooltip"
                                   data-placement="top"
@@ -154,7 +154,7 @@
     </div>
 </div>
 
-<div id="popover-content" class="hide">
+<div id="archive_popover_content" class="hide">
 {{=conclusion_form.custom.begin}}
 {{=conclusion_form.custom.widget.conclusion}}
 {{=conclusion_form.custom.submit}}
@@ -163,7 +163,7 @@
     <div class="clearfix"></div>
 </div>
 
-<div id="note-popover-content" class="hide">
+<div id="note_popover_content" class="hide">
     <div class="row">
 {{for row in rows:}}
     {{if len(row.referral_notes):}}
@@ -254,68 +254,64 @@
 {{include '__page_js/object_modal.html'}}
 {{include '__page_js/flash_modal.html'}}
 {{include '__page_js/table_check_all.html'}}
-<script>
-    $(function () {  {{# has to be in a ready function as many dependencies use ready function too}}
-        $('[data-object-note]').popover({
+<script>  // move to js file
+    function button_mini_modal(data_object_button, popover_content, hide_other_button_popovers, hidden_field, action) {
+        $('['+data_object_button+']').popover({
             html: true,
             placement: 'left',
             container: 'body',  {{# container: 'body'. This option is particularly useful in that it allows you to position the popover in the flow of the document near the triggering element - which will prevent the popover from floating away from the triggering element during a window resize.}}
             content: function () {
-                return $("#note-popover-content").html();
+                return $('#'+popover_content).html();
             },
             trigger: 'manual'  {{# http://stackoverflow.com/questions/16150163/show-one-popover-and-hide-other-popovers}}
         }).on('click', function (e) {
+            $.proxy(action, this)(); {{# returns a function with a new context, or use action.call(this);}}  {{# set function to use proper this http://stackoverflow.com/questions/456967/javascript-how-to-set-this-variable-easily}}
+            $('body').addClass('modal-open');  {{# stop the body from scrolling when scrolling in a popover}}
+            $(this).popover('show');  {{# keep after addClass('modal-open') because scroll bar vanishes and button moves away from popover}}
+            $('['+data_object_button+']').not(this).popover('hide');
+            var each;
+            for (each in hide_other_button_popovers){
+                $('['+hide_other_button_popovers[each]+']').popover('hide');
+            }
+        }).on('shown.bs.popover', function (e) {
+            $("input[name="+hidden_field+"]").val($(this).attr(data_object_button));
+        })
+    }
+    function close_button_mini_modal(dont_hide_near, hide_button_popovers){
+        $("html").click(function (e) {  {{# hide popover when clicking anywhere outside of button or child icon}}
+            var obj = $(e.target);
+            if (!$.map(dont_hide_near, function(object_selector, i){  {{# if not click any popover, hide all popovers. also consider http://stackoverflow.com/questions/23391061/is-there-an-equivalent-to-pythons-all-function-in-javascript-or-jquery}}
+                    //console.log(Boolean(obj.closest(object_selector).length));
+                    return Boolean(obj.closest(object_selector).length);  {{# use closest instead of parent as closest checks the start element also}}
+                }).some(function(exists){return exists==true})) {  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
+                var each;
+                for (each in hide_button_popovers){
+                    //console.log(button_popover_selector);  {{# apparently for in just gets index, pretty stupid.}}
+                    $('['+hide_button_popovers[each]+']').popover('hide');
+                }
+                $('body').removeClass('modal-open');
+            }
+        });
+    }
+</script>
+<script>
+    $(function(){
+        button_mini_modal('data-object-note', 'note_popover_content', ['data-object-archive'], '_add_note_to', function(){
             var note_data = $("#referral_note_data_"+$(this).attr('data-object-note'));
             if (note_data.length) {
                 $("#referral_note_display").html(note_data.html()).removeClass("hide");
             } else {
                 $("#referral_note_display").html("").addClass("hide");
             }
-            $('body').addClass('modal-open');  {{# stop the body from scrolling when scrolling in a popover}}
-            $(this).popover('show');  {{# keep after addClass('modal-open') because scroll bar vanishes and button moves away from popover}}
-            $('[data-object-note]').not(this).popover('hide');
-            $('[data-archive-object]').popover('hide');
-        }).on('shown.bs.popover', function (e) {
-            $("input[name='_request']").val($(this).attr('data-object-note'));
         });
     });
-</script>
-<script>
-    $(function () {  {{# has to be in a ready function as many dependencies use ready function too}}
-        $('[data-archive-object]').popover({
-            html: true,
-            placement: 'left',
-            container: 'body',  {{# container: 'body'. This option is particularly useful in that it allows you to position the popover in the flow of the document near the triggering element - which will prevent the popover from floating away from the triggering element during a window resize.}}
-            content: function () {
-                return $("#popover-content").html();
-            },
-            trigger: 'manual'  {{# http://stackoverflow.com/questions/16150163/show-one-popover-and-hide-other-popovers}}
-        }).on('click', function (e) {
-            $('body').addClass('modal-open');
-            $(this).popover('show');
-            $('[data-archive-object]').not(this).popover('hide');
-            $('[data-object-note]').popover('hide');
-        }).on('shown.bs.popover', function (e) {
-            $("input[name='_conclude']").val($(this).attr('data-archive-object'));
-        })
-    });
-</script>
-<script>
     $(function(){
-        $("html").click(function (e) {  {{# hide popover when clicking anywhere outside of button or child icon}}
-            var obj = $(e.target);
-            //console.log(obj);
-            if (!(obj.closest('[data-archive-object]').length ||  {{# use closest instead of parent as closest checks the start element also}}
-                  obj.closest('[data-object-note]').length ||
-                  obj.closest('#conclusion_form').length ||  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
-                  obj.closest('.popover').length
-                )) {  {{#http://stackoverflow.com/questions/3957017/jquery-if-target-is-child-of-wrapper-then-do-something}}
-                $('[data-archive-object]').popover('hide');
-                $('[data-object-note]').popover('hide');
-                $('body').removeClass('modal-open');
-            }
-        });
+        button_mini_modal('data-object-archive', 'archive_popover_content', ['data-object-note'], '_conclude', function(){});
     });
+    $(function(){close_button_mini_modal(
+            ['[data-object-archive]', '[data-object-note]', '#conclusion_form', '.popover'],  {{# for some reason clicking on form label hides the popover, probably has to do with container: 'body'}}
+            ['data-object-archive', 'data-object-note']
+    )});
 </script>
 <script>
     $(function(){$("[data-outgoing-object], table .glyphicon-check").click(function () {
