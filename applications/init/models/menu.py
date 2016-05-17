@@ -29,7 +29,7 @@ response.google_analytics_id = None
 #########################################################################
 
 response.menu = [
-    (T('Business Report'), (not request.args), URL('default', 'index'), []),
+    (T('Business Report'), (not request.args and request.controller != 'manage'), URL('default', 'index'), []),
     (T('Referral Bucket'), ('referral' in request.args), URL('default', 'bucket', args=['referral']), []),  # https://web2py.wordpress.com/tag/active-menu/
     (T('Lab Order Bucket'), ('lab_order' in request.args), URL('default', 'bucket', args=['lab_order']), []),
     (T('DI Order Bucket'), ('di_order' in request.args), URL('default', 'bucket', args=['di_order']), []),

@@ -38,9 +38,9 @@
                 <td>{{=row.referral.appointment_date}}</td>
                 <td>
                     {{if row.referral_outbox.status == "sent":}}
-                        Sent {{=row.referral_outbox.attempts}} Time{{if row.referral_outbox.attempts>1:}}s{{pass}}
+                        Sent {{=row[bucket+'_outbox'].attempts}} Time{{if row[bucket+'_outbox'].attempts>1:}}s{{pass}}
                     {{else:}}
-                        {{=row.referral_outbox.status}}
+                        {{=row[bucket+'_outbox'].status}}
                     {{pass}}
                 </td>
             </tr>

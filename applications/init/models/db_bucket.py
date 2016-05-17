@@ -52,3 +52,26 @@ db.define_table("provider",
     Field('ext', requires=IS_EMPTY_OR(IS_INT_IN_RANGE(0, 10000))),
     auth.signature,
 )
+
+bucket_generic_fields = [
+    Field('patient', 'reference patient', requires=IS_IN_DB(db, db.patient, '%(last_name)s, %(first_name)s'), readable=False, writable=False),
+    Field('order_date', 'date', default=request.now, readable=False, writable=False),  # change to dt # customize https://www.youtube.com/watch?v=nk5YEP5r-UQ
+    Field('ordering_provider', 'reference provider', requires=IS_IN_DB(db, db.provider, '%(last_name)s, %(first_name)s %(title)s')),
+    Field('appointment_date', 'date', default=request.now),
+    Field('destination', "reference site", requires=IS_IN_DB(db, db.site, '%(name)s')),  # 1st arg can be db or query set: db.person.name.requires = IS_IN_DB(db(db.person.id>10), 'person.id', '%(name)s')
+    Field('urgent', 'boolean'),
+    Field('conclusion', readable=False, writable=False, requires=IS_IN_SET([('deleted', 'Delete Referral'), ('received', "Referral Received"), ('missed', "Appointment Missed"), ('other', "Other Reason (In Notes)")], zero=None), widget=SQLFORM.widgets.radio.widget),
+    auth.signature,
+]
+
+bucket_outbox_generic_fields = [
+    Field('status', requires=IS_IN_SET(["new", "sending", "failed", "sent"])),
+    Field('attempts', 'integer', default=0),
+    auth.signature,
+]
+
+bucket_note_generic_fields = [
+    Field('note'),
+    Field('is_log', 'boolean', required=True),
+    auth.signature,
+]

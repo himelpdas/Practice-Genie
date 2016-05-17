@@ -2,16 +2,25 @@
 {{from gluon.serializers import json}}
 {{import humanize}}
 
+{{bucket_title = bucket.split("_")
+bucket_title[0] = bucket_title[0].upper() if len(bucket_title[0])<=2 else bucket_title[0].capitalize()
+if len(bucket_title) > 1:
+      bucket_title[1] = bucket_title[1].capitalize()
+pass
+bucket_title = " ".join(bucket_title)
+}}
+
 <script>
     function set_object_form_vals() {
         $("input[name='first_name']").val(arguments[0]);
         $("input[name='last_name']").val(arguments[1]);
         $("input[name='date_of_birth']").val(arguments[2]);
-        $("select[name='ordering_provider']").val(arguments[3]);
-        $("input[name='appointment_date']").val(arguments[4]);
-        $("select[name='referral_destination']").val(arguments[5]);
-        $("input[name='urgent']").prop("checked", arguments[6]);
-        $("input[name='_update']").val(arguments[7])
+        $("input[name='cell_or_email']").val(arguments[3]);
+        $("select[name='ordering_provider']").val(arguments[4]);
+        $("input[name='appointment_date']").val(arguments[5]);
+        $("select[name='destination']").val(arguments[6]);
+        $("input[name='urgent']").prop("checked", arguments[7]);
+        $("input[name='_update']").val(arguments[8])
     }
 </script>
 
@@ -27,7 +36,7 @@
         <button id="add_object_btn" type="button"
                 class="btn btn-primary pull-right btn-sm" {{''' data-toggle="modal" data-target="#object_modal" '''}} >
             <span class="glyphicon glyphicon-plus"></span>
-            Add Referral
+            Add {{=bucket.replace("_", " ")}}
         </button>
         <div class="clearfix"></div>  {{# clearfix expands parent div to cover a float-left or float-right element }}
     </div>
@@ -35,24 +44,24 @@
         <table class="table table-hover table-bordered table-condensed {{if 'archive' in request.args:}}table-striped{{pass}}">
             <tr class="active">
                 <th><a href="#" class="table_header_links"><span class="glyphicon glyphicon-check"></span></a></th>
-                <th><a href="{{=paginater.order_links["referral"]["urgent"]["url"]}}" class="table_header_links"><span
-                        class="glyphicon glyphicon-flag"></span></a> {{=paginater.order_links["referral"]["urgent"]["arrow"]}}
+                <th><a href="{{=paginater.order_links[bucket]["urgent"]["url"]}}" class="table_header_links"><span
+                        class="glyphicon glyphicon-flag"></span></a> {{=paginater.order_links[bucket]["urgent"]["arrow"]}}
                 </th>
-                <th><a href="{{=paginater.order_links["referral"]["id"]["url"]}}" class="table_header_links">Order
-                    Date</a> {{=paginater.order_links["referral"]["id"]["arrow"]}}</th>
+                <th><a href="{{=paginater.order_links[bucket]["id"]["url"]}}" class="table_header_links">Order
+                    Date</a> {{=paginater.order_links[bucket]["id"]["arrow"]}}</th>
                 <th><a href="{{=paginater.order_links["patient"]["last_name"]["url"]}}" class="table_header_links">Patient
                     Name</a> {{=paginater.order_links["patient"]["last_name"]["arrow"]}}</th>
                 <th><a href="{{=paginater.order_links["patient"]["date_of_birth"]["url"]}}" class="table_header_links">Date
                     of Birth</a> {{=paginater.order_links["patient"]["date_of_birth"]["arrow"]}}</th>
                 <th><a href="{{=paginater.order_links["provider"]["last_name"]["url"]}}" class="table_header_links">Ordering
                     Provider</a> {{=paginater.order_links["provider"]["last_name"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["site"]["name"]["url"]}}" class="table_header_links">Referral
+                <th><a href="{{=paginater.order_links["site"]["name"]["url"]}}" class="table_header_links">{{=bucket_title}}
                     Destination</a> {{=paginater.order_links["site"]["name"]["arrow"]}}</th>
-                <th><a href="{{=paginater.order_links["referral"]["appointment_date"]["url"]}}"
+                <th><a href="{{=paginater.order_links[bucket]["appointment_date"]["url"]}}"
                        class="table_header_links">Appointment
-                    Date</a> {{=paginater.order_links["referral"]["appointment_date"]["arrow"]}}</th>
+                    Date</a> {{=paginater.order_links[bucket]["appointment_date"]["arrow"]}}</th>
                 <th><a href="#" class="table_header_links">{{if not archive:}}Outbox{{else:}}Conclusion{{pass}}</a></th>
-                <th class="col-md-1">
+                <th class="col-md-{{if len(rows):}}1{{else:}}2{{pass}}">  {{# col-md-1: make sure search bar is shrunk to toolbar width, col-md-2: make sure search bar is expanded if rows are empty}}
                     <div class="form-group-sm {{if request.vars.patient:}}has-feedback{{pass}}">
                         <input id="patient_search_input" class="form-control input-sm" type="text" data-toggle="tooltip" data-placement="top"
                                title="{{=T('Last name')}}<b>,</b> {{=T('First name')}}" placeholder="&#128269; Search Patient">  {{# input-sm not needed when parent is form-group-sm}}
@@ -81,29 +90,29 @@
                 </th>
             </tr>
         {{for i, row in enumerate(rows):}}
-            <tr {{if not "archive" in request.args:}}{{if not row.referral_outbox.status == "new":}}class="{{if row.referral_outbox.status != "sent":}}attempting{{elif row.referral_outbox.attempts==1:}}first_attempt{{elif row.referral_outbox.attempts==2:}}second_attempt{{else:}}third_attempt{{pass}}"{{pass}}{{pass}}>
-                <td><input data-outgoing-object="{{=row.referral.id}}" type="checkbox" class="table_checkbox"
-                           title="{{=bucket.capitalize()}} ID {{=row.referral.id}}"></td>
+            <tr {{if not "archive" in request.args:}}{{if not row[bucket+'_outbox'].status == "new":}}class="{{if row[bucket+'_outbox'].status != "sent":}}attempting{{elif row[bucket+'_outbox'].attempts==1:}}first_attempt{{elif row[bucket+'_outbox'].attempts==2:}}second_attempt{{else:}}third_attempt{{pass}}"{{pass}}{{pass}}>
+                <td><input data-outgoing-object="{{=row[bucket].id}}" type="checkbox" class="table_checkbox"
+                           title="{{=bucket.capitalize()}} ID {{=row[bucket].id}}"></td>
                 <td>
-                {{if row.referral.urgent:}}
+                {{if row[bucket].urgent:}}
                     <span class="glyphicon glyphicon-exclamation-sign text-danger" title="Urgent" data-toggle="tooltip"
                           data-placement="top"></span>
                 {{pass}}
                 </td>
-                <td>{{=row.referral.order_date}}</td>
+                <td>{{=row[bucket].order_date}}</td>
                 <td>{{=row.patient.last_name}}, {{=row.patient.first_name}}</td>
                 <td>{{=row.patient.date_of_birth}}</td>
                 <td>{{=row.provider.last_name}}, {{=row.provider.first_name}} {{=row.provider.title}}</td>
                 <td>{{=row.site.name}}</td>
-                <td>{{=row.referral.appointment_date}}</td>
+                <td>{{=row[bucket].appointment_date}}</td>
                 <td>{{if archive:}}
-                {{set_to_label = dict(zip(db.referral.conclusion.requires.theset, db.referral.conclusion.requires.labels))}}
-                {{=set_to_label[row.referral.conclusion]}}
+                {{set_to_label = dict(zip(db[bucket].conclusion.requires.theset, db[bucket].conclusion.requires.labels))}}
+                {{=set_to_label[row[bucket].conclusion]}}
                 {{else:}}
-                    {{if row.referral_outbox.status == "sent":}}  {{# IF BLANK DB, CREATE REFERENCES FOR EACH ROW IN SHELL}}
-                        Sent {{=row.referral_outbox.attempts}} Time{{if row.referral_outbox.attempts>1:}}s{{pass}}
+                    {{if row[bucket+'_outbox'].status == "sent":}}  {{# IF BLANK DB, CREATE REFERENCES FOR EACH ROW IN SHELL}}
+                        Sent {{=row[bucket+'_outbox'].attempts}} Time{{if row[bucket+'_outbox'].attempts>1:}}s{{pass}}
                     {{else:}}
-                        {{=row.referral_outbox.status.capitalize()}}
+                        {{=(row[bucket+'_outbox'].status or "").capitalize()}}
                     {{pass}}
                 {{pass}}
                 </td>
@@ -112,32 +121,32 @@
                          style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
                         <button type="button" class="btn btn-secondary btn-sm"
                                 title="<span class='glyphicon glyphicon-folder-open'></span><span class='pull-right'>Conclude {{=bucket.capitalize()}}</span>"
-                                data-object-archive="{{=row.referral.id}}">
+                                data-object-archive="{{=row[bucket].id}}">
                             <span class="glyphicon glyphicon-folder-open"
                                   title="Conclude {{=bucket.capitalize()}}" data-toggle="tooltip"
                                   data-placement="top"
                             ></span>
                         </button>
                         <button type="button" class="btn btn-secondary btn-sm"
-                                data-edit-object="{{=row.referral.id}}"><span
+                                data-edit-object="{{=row[bucket].id}}"><span
                                 class="glyphicon glyphicon-edit" title="Edit {{=bucket.capitalize()}}"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
                         <script>
-                            $('[data-edit-object="{{=row.referral.id}}"]').click(function () {
+                            $('[data-edit-object="{{=row[bucket].id}}"]').click(function () {
                                 var urgent;
-                            {{=XML("urgent="+json(row.referral.urgent)+";")}}
-                                set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row.referral.ordering_provider}}", "{{=row.referral.appointment_date}}", "{{=row.referral.referral_destination}}", urgent, "{{=row.referral.id}}")
+                            {{=XML("urgent="+json(row[bucket].urgent)+";")}}
+                                set_object_form_vals("{{=row.patient.first_name}}", "{{=row.patient.last_name}}", "{{=row.patient.date_of_birth}}", "{{=row[bucket].patient.cell_or_email}}", "{{=row[bucket].ordering_provider}}", "{{=row[bucket].appointment_date}}", "{{=row[bucket].destination}}", urgent, "{{=row[bucket].id}}")
                             });
                         </script>
                         <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-comment'></span><span class='pull-right'>{{=bucket.capitalize()}} Notes</span>"
-                        data-object-note="{{=row.referral.id}}">
+                        data-object-note="{{=row[bucket].id}}">
                             <span
                                 class="glyphicon glyphicon-comment" title="{{=bucket.capitalize()}} Notes"
                                 data-toggle="tooltip"
                                 data-placement="top"></span></button>
                         <button type="button" class="btn btn-secondary btn-sm" title="<span class='glyphicon glyphicon-list-alt'></span><span class='pull-right'>{{=bucket.capitalize()}} Logs</span>"
-                        data-object-log="{{=row.referral.id}}">
+                        data-object-log="{{=row[bucket].id}}">
                             <span
                                 class="glyphicon glyphicon-list-alt" title="{{=bucket.capitalize()}} Log"
                                 data-toggle="tooltip"
@@ -168,8 +177,8 @@
 <div id="note_popover_content" class="hide">
     <div class="row">
 {{for row in rows:}}
-    {{if len(row.referral_notes):}}
-        <table id='referral_note_data_{{=row.referral.id}}' class="hide">
+    {{if len(row[bucket+'_notes']):}}
+        <table id='note_data_{{=row[bucket].id}}' class="hide">
             <tr>
                 <th class="col-xs-4">
                     Timestamp
@@ -178,21 +187,21 @@
                     Comment
                 </th>
             </tr>
-        {{for note in row.referral_notes:}}
+        {{for note in row[bucket+'_notes']:}}
             <tr>
                 <td>
-                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=note.referral_note.created_on}}">{{=humanize.naturaltime(note.referral_note.created_on)}}</p>
+                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=note[bucket+'_note'].created_on}}">{{=humanize.naturaltime(note[bucket+'_note'].created_on)}}</p>
                     <p class="text-muted">{{=note.auth_user.first_name.capitalize()}} {{=note.auth_user.last_name.capitalize()}}</p>
                 </td>
                 <td>
-                    {{=note.referral_note.note}}
+                    {{=note[bucket+'_note'].note}}
                 </td>
             </tr>
         {{pass}}
         </table>
     {{pass}}
 {{pass}}
-        <table id='referral_note_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em;">
+        <table id='note_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em;">
         </table>
     </div>
         {{=note_form.custom.begin}}
@@ -212,8 +221,8 @@
 <div id="log_popover_content" class="hide">
     <div class="row">
 {{for row in rows:}}
-    {{if len(row.referral_logs):}}
-        <table id='referral_log_data_{{=row.referral.id}}' class="hide">
+    {{if len(row[bucket+'_logs']):}}
+        <table id='log_data_{{=row[bucket].id}}' class="hide">
             <tr>
                 <th class="col-xs-4">
                     Timestamp
@@ -222,21 +231,21 @@
                     Comment
                 </th>
             </tr>
-        {{for log in row.referral_logs:}}
+        {{for log in row[bucket+'_logs']:}}
             <tr>
                 <td>
-                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=log.referral_note.created_on}}">{{=humanize.naturaltime(log.referral_note.created_on)}}</p>
+                    <p class="text-muted" data-toggle="tooltip" data-placement="top" title="{{=log[bucket+'_note'].created_on}}">{{=humanize.naturaltime(log[bucket+'_note'].created_on)}}</p>
                     <p class="text-muted">{{=log.auth_user.first_name.capitalize()}} {{=log.auth_user.last_name.capitalize()}}</p>
                 </td>
                 <td>
-                    {{=log.referral_note.note}}
+                    {{=log[bucket+'_note'].note}}
                 </td>
             </tr>
         {{pass}}
         </table>
     {{pass}}
 {{pass}}
-        <table id='referral_log_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em;">
+        <table id='log_display' class="small table table-condensed" style="overflow-y: auto; max-height: 27em;">
         </table>
 </div>        
 </div>
@@ -268,9 +277,10 @@
     default_args = [$("input[name='first_name']").val(),
         $("input[name='last_name']").val(),
         $("input[name='date_of_birth']").val(),
+        $("input[name='cell_or_email']").val(),
         $("select[name='ordering_provider']").val(),
         $("input[name='appointment_date']").val(),
-        $("select[name='referral_destination']").val(),
+        $("select[name='destination']").val(),
         $("input[name='urgent']").prop("checked"),
         $("input[name='_update']").val()];  {{# val is 0}}
 
@@ -328,21 +338,21 @@
 <script>
     $(function(){
         button_mini_modal('data-object-note', 'note_popover_content', ['data-object-archive','data-object-log'], '_add_note_to', function(){
-            var note_data = $("#referral_note_data_"+$(this).attr('data-object-note'));
+            var note_data = $("#note_data_"+$(this).attr('data-object-note'));
             if (note_data.length) {
-                $("#referral_note_display").html(note_data.html()).removeClass("hide");
+                $("#note_display").html(note_data.html()).removeClass("hide");
             } else {
-                $("#referral_note_display").html("").addClass("hide");
+                $("#note_display").html("").addClass("hide");
             }
         });
     });
     $(function(){
         button_mini_modal('data-object-log', 'log_popover_content', ['data-object-archive', 'data-object-note'], '_add_log_to', function(){
-            var log_data = $("#referral_log_data_"+$(this).attr('data-object-log'));
+            var log_data = $("#log_data_"+$(this).attr('data-object-log'));
             if (log_data.length) {
-                $("#referral_log_display").html(log_data.html()).removeClass("hide");
+                $("#log_display").html(log_data.html()).removeClass("hide");
             } else {
-                $("#referral_log_display").html("").addClass("hide");
+                $("#log_display").html("").addClass("hide");
             }
         });
     });
