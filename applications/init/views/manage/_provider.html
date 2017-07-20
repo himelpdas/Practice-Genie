@@ -1,0 +1,52 @@
+{{extend 'manage/layout.html'}}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title pull-left display-3"><span
+                class="glyphicon glyphicon-user"></span> {{=request.controller.capitalize()}} {{=request.function.capitalize()}}
+        </h3>
+        <button type="button" class="btn btn-primary pull-right btn-sm" data-toggle="modal"
+                data-target="#add_{{=request.function}}_modal"><span class="glyphicon glyphicon-plus"></span>
+            Add {{=request.function}}
+        </button>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body" style="overflow-x: auto;"> {{# otherwise it will overflow beyond panel-body when resized}}
+        <table class="table table-striped table-hover table-bordered table-condensed">
+            <tr>
+                <th>Provider name</th>
+                <th>Title</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Site</th>
+                <th>Options</th>
+            </tr>
+        {{for i, row in enumerate(rows):}}
+            <tr>
+                <td>{{=row.provider.last_name}}, {{=row.provider.first_name}}</td>
+                <td>{{=row.provider.title}}</td>
+                <td>{{=row.provider.phone}}{{if row.provider.ext:}} Ext: {{=row.provider.ext}}{{pass}}</td>
+                <td>{{=row.provider.email}}</td>
+                <td>{{=row.site.name}}</td>
+                <td>
+                    <div class="btn-group" role="group"
+                         style="display: flex; justify-content: center;"> {{#http://stackoverflow.com/questions/10706177/bootstrap-btn-group-mis-aligned}}
+                        <button type="button" class="btn btn-secondary btn-sm"><span
+                                class="glyphicon glyphicon-trash" title="Trash"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-secondary btn-sm"><span
+                                class="glyphicon glyphicon-edit" title="Edit"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                        <button type="button" class="btn btn-secondary btn-sm"><span
+                                class="glyphicon glyphicon-duplicate" title="Notes"
+                                data-toggle="tooltip"
+                                data-placement="top"></span></button>
+                    </div>
+                </td>
+            </tr>
+        {{pass}}
+        </table>
+    </div>
+</div>

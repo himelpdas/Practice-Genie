@@ -149,7 +149,7 @@ def bucket():
             body = response.render('__doc_templates/fax.html', dict(rows=outgoing_bucket_rows, bucket=bucket))
 
             if mail.send(to=['himel.p.das@gmail.com'],
-                         subject='Practice Genie MD Outstanding Orders ' + str(request.now),
+                         subject='QMTrax Outstanding Orders ' + str(request.now),
                          message=body):
                 send_success = True
             else:
@@ -193,6 +193,7 @@ def bucket():
     if note_form.process().accepted:
         parent_id = int(request.post_vars['_add_note_to'] or -1)
         if parent_id:
+            del note_form.vars["parent"]
             db[bucket+'_note'].insert(parent=parent_id, **db[bucket+'_note']._filter_fields(note_form.vars))
             response.flash = "Note was entered to the %s." % bucket
         else:

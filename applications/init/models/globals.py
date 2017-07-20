@@ -1,1 +1,0 @@
-# Objects here will be accessible across views, controllers, and any models alphabetically after

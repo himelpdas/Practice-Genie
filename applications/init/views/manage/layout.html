@@ -3,36 +3,16 @@
 
 {{block left_sidebar}}
 <ul class="nav nav-pills nav-stacked">
-    <li role="presentation"><a href="#">Destinations</a></li>
-    <li role="presentation"><a href="#">Patients</a></li>
-    <li role="presentation" class="active"><a href="#">Providers</a></li>
-    <li role="presentation"><a href="#">Sites</a></li>
+    {{for each in ['destination', 'patient', 'provider', 'site']:}}
+            <li role="presentation" {{if request.function==each:}}class="active"{{pass}}><a href="./{{=each}}">{{=each}}s</a></li>
+    {{pass}}
 </ul>
 {{super}}
 {{end}}
 
 {{include}}
 
-{{if 'form' in globals():}}  {{# possible that a manage function might not need form}}
-<div id="add_{{=request.function}}_modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button>
-                <h4 class="modal-title"><span class="glyphicon glyphicon-plus"></span> Add {{=request.function.capitalize()}}</h4>
-            </div>
-            <div class="modal-body">
-            {{form.element('div#submit_record__row').element('div.col-sm-9')['_class']="col-sm-12"}}    {{# https://groups.google.com/forum/#!topic/web2py/bgDJWVmhS5Y}}
-            {{for i in form.elements('div.form-group'):}}   {{# just .form-group works, but better to be explicit  # http://www.w3schools.com/bootstrap/bootstrap_forms_sizing.asp}}
-                {{i['_class'] += " form-group-sm"}}
-            {{pass}}
-                {{=form}}
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-{{pass}}
+{{# begin}}
 
 {{block page_js}}
 {{include '__page_js/tooltip.html'}}
